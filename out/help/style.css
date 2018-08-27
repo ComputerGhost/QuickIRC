@@ -1,0 +1,95 @@
+
+/* Main Structure */
+
+body {
+	font: 16px/22px Helvetica, sans-serif;
+	margin: 0;
+	text-align: center;
+}
+
+main {
+	margin: 0 auto;
+	max-width: 1024px;
+	text-align: left;
+}
+
+section {
+	margin-bottom: 1em;
+	overflow: hidden;
+	padding: 0 1em;
+}
+
+#table-of-contents {
+	border: 1px solid #ccc;
+	max-width: 400px;
+	padding: 0.5em;
+}
+	#table-of-contents h3 {
+		margin: 0 0 0.25em 0;
+	}
+	#table-of-contents ul {
+		margin: 0;
+	}
+
+
+/* Paragraph-type items */
+
+dl, h2, h3, img, p, ul {
+	margin: 1em 0;
+	max-width: 750px;
+	overflow: hidden;
+}
+
+dt::before {
+	color: blue;
+	content: '• ';
+}
+
+h2 {
+	background: #ddd;
+	max-width: 100%;
+	padding: 0.25em;
+	text-align: center;
+}
+
+img {
+	max-width: 100%;
+}
+
+ul {
+	list-style: inside;
+	padding: 0 0 0 0.5em;
+}
+
+
+/* Formatting */
+
+.code {
+	font-face: verdana, sans-serif;
+}
+
+.float-left {
+	float: left;
+	margin-right: 1em;
+}
+
+.float-right {
+	float: right;
+	margin-left: 1em;
+}
+
+
+/* For smaller screens */
+
+@media screen and (max-width: 570px) {
+	.hide-on-mobile {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 425px) {
+	.float-left, .float-right {
+		float: none;
+		margin: 0;
+	}
+}

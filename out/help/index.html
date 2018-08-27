@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>QuickIRC Help</title>
+		<link rel="icon" href="favicon.ico">
+		<link rel="stylesheet" href="style.css">
+        <!--[if lt IE 9]><script src="html5shiv.min.js"></script><![endif]-->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+	</head>
+	
+	<body>
+		
+		<header>
+			<h1>QuickIRC Help</h1>
+		</header>
+		
+		<main>
+		
+			<section>
+				<nav id="table-of-contents" class="float-right">
+					<h3>Table of Contents</h3>
+					<ul>
+						<li><a href="#get_started">Getting Started</a></li>
+						<li><a href="#commands">Commands</a></li>
+						<li><a href="#support">Support</a></li>
+						<li><a href="#license">License</a></li>
+					</ul>
+				</nav>
+				<img class="float-left hide-on-mobile" src="Logo.png" width="160" height="160">
+				<p>QuickIRC is designed to be simple to use without a lot of noisy bells and whistles. If you just want to connect, this IRC client is for you!</p>
+				<p>But maybe you are looking for something feature-rich and complicated. In that case, <a href="http://xchat.org/">XChat</a> and <a href="https://hexchat.github.io/">HexChat</a> are both very good alternatives. QuickIRC's strength is in its simplicity.</p>
+			</section>
+			
+			<a name="get_started"></a>
+			<h2>Getting Started</h2>
+			<section>
+				<p>When QuickIRC first opens, you'll see the connection tab. Fill in the host and nickname. The username will automatically fill in. Hit Connect!</p>
+				<div style="text-align: center"><img src="connection.png"></div>
+				<p>Once the connection comes up, type in <span class="code">/join #chat</span> (replacing <span class="code">#chat</span> with the channel you want to join). Hit Enter, and the channel chatroom will appear!</p>
+			</section>
+			
+			<a name="commands"></a>
+			<h2>Commands</h2>
+			<section>
+				<p>QuickIRC aims to support all standard IRC commands, with the exception of some client-to-client (CTCP) functionality. The most common commands are listed below.</p>
+				
+				<h3>Global Commands</h3>
+				<p>These commands are valid in any context.</p>
+				<dl>
+					<dt><span class="code">/join &lt;channel_name&gt;</span></dt>
+					<dd>Joins the specified channel. You can join more than one by separating them with commas.</dd>
+					<dt><span class="code">/msg &lt;nickname&gt;</span></dt>
+					<dd>Sends a private message to another user.</dd>
+					<dt><span class="code">/nick &lt;new_nickname&gt;</span></dt>
+					<dd>Changes your nickname that is visible to others.</dd>
+					<dt><span class="code">/part &lt;channel_name&gt; [reason]</span></dt>
+					<dd>Leaves the specified channel. Optionally, you can specify a parting message.</dd>
+				</dl>
+				
+				<h3>Channel Commands</h3>
+				<p>These commands and syntaxes are available within channel chats.</p>
+				<dl>
+					<dt><span class="code">/part [reason]</span></dt>
+					<dd>Leaves the current channel. Optionally, you can specify a parting message.</dd>
+					<dt><span class="code">/say &lt;message&gt;</span></dt>
+					<dd>The same as sending a message like normal, except now it can start with a forward-slash!</dd>
+					<dt><span class="code">/topic</span></dt>
+					<dd>Shows the current topic of the channel in chat.</dd>
+					<dt><span class="code">/topic &lt;new_topic&gt;</span></dt>
+					<dd>Changes the topic of the channel. Note, you must have permission to change the topic for this to work.</dd>
+				</dl>
+				
+				<h3>Private Message Commands</h3>
+				<p>These commands and syntaxes are available within private message chats.</p>
+				<dl>
+					<dt><span class="code">/part</span></dt>
+					<dd>Closes the private message chat.</dd>
+					<dt><span class="code">/say &lt;message&gt;</span></dt>
+					<dd>The same as saying a message like normal, except now you can start your message with a forward-slash!</dd>
+				</dl>
+				
+			</section>
+			
+			<a name="support"></a>
+			<h2>Support</h2>
+			<section>
+				<p>I hope that QuickIRC is easy for you to use and that you never run into unexpected behavior.</p>
+				<p>If you do need technical support, I welcome you to email me at <a href="mailto:nathan.belue@gmail.com">nathan.belue@gmail.com</a>. For a faster solution, you can check out current issues at <a href="https://github.com/ComputerGhost/QuickIRC/issues">the GitHub site</a>. Be sure to file a bug report so that I can improve QuickIRC in later versions!</p>
+			</section>
+			
+			<a name="license"></a>
+			<h2>License</h2>
+			<section>
+				<p>QuickIRC is released under the MIT license. I don't care what you do so long as I keep the copyright.</p>
+				<h3>Legalese</h3>
+				<p>Copyright (c) 2018 Nathan Belue</p>
+				<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+				<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+				<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+			</section>
+		
+		</main>
+	
+	</body>
+
+</html>
