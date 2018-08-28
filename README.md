@@ -24,13 +24,11 @@ More features will be added, but the current feature list is:
  
 ## Requirements
 
-Microsoft Windows is required. While QuickIRC may run on earlier versions, only Windows 10 is officially supported at this time.
+Microsoft Windows is required. While QuickIRC may run on earlier versions, it is only being tested on Windows 10 at this time.
 
 ## Installation
 
-Currently, it is recommended to run the program from Visual Studio. QuickIRC should be set to run within the `out` folder.
-
-If you do wish to install this development version of QuickIRC, simply put the binary in the `out` folder and copy it to wherever you want it installed.
+Currently, it is recommended to run the program from within Visual Studio. QuickIRC should be set to run within the `out` folder.
 
 ## Bug Reporting
 
