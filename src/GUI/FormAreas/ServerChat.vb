@@ -1,7 +1,7 @@
 ﻿Public Class ServerChat
 
 
-    Sub BindToChat(chat As ChatStorage)
+    Sub BindToChat(chat As ServerChatStorage)
 
         If BoundChat IsNot Nothing Then
             BoundChat.Message = txtMessage.Text
@@ -23,7 +23,7 @@
 
 #Region "Internals"
 
-    Private BoundChat As ChatStorage
+    Private BoundChat As ChatStorageBase
 
     Private Sub txtMessage_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtMessage.KeyPress
         Select Case e.KeyChar

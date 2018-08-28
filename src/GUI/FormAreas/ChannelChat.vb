@@ -1,7 +1,7 @@
 ﻿Public Class ChannelChat
 
 
-    Sub BindToChat(chat As ChatStorage)
+    Sub BindToChat(chat As ChannelChatStorage)
 
         If BoundChat IsNot Nothing Then
             BoundChat.Message = txtMessage.Text
@@ -24,7 +24,7 @@
 
 #Region "Internals"
 
-    Private BoundChat As ChatStorage
+    Private BoundChat As ChatStorageBase
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Dim chat = DirectCast(BoundChat.Chat, IRC.ChannelChat)

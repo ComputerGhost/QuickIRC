@@ -14,14 +14,14 @@
             .OnChannelParted = AddressOf HandleChannelParted})
         Connection.RegisterChat(connection_info.Connector)
 
-        AddChat("Server", "server", New ChatStorage(New IRC.ServerChat()))
-        AddChat("Server", "raw", New ChatStorage(New IRC.ChatBase()))
+        AddChat("Server", "server", New ServerChatStorage(New IRC.ServerChat()))
+        AddChat("Server", "raw", New ServerChatStorage(New IRC.ChatBase()))
 
         Connection.Connect()
 
     End Sub
 
-    Sub AddChat(group_name As String, chat_name As String, chat_info As ChatStorage)
+    Sub AddChat(group_name As String, chat_name As String, chat_info As ChatStorageBase)
 
         If InvokeRequired Then
             Invoke(Sub() AddChat(group_name, chat_name, chat_info))
@@ -63,7 +63,8 @@
 
         Dim item_index = lstChannels.Items.IndexOfKey(chat_name)
         Dim list_item = lstChannels.Items(item_index)
-        Dim chat = DirectCast(list_item.Tag, IRC.ChatBase)
+        Dim chat_info = DirectCast(list_item.Tag, ChatStorageBase)
+        Dim chat = chat_info.Chat
 
         Connection.UnregisterChat(chat)
         lstChannels.Items.Remove(list_item)
@@ -79,13 +80,13 @@
 
         Dim prefixes = Connection.ServerLimits.ChanTypes
         If prefixes.Contains(channel_name(0)) Then
-            Dim chat = New ChatStorage(New IRC.ChannelChat(channel_name))
-            AddChat("Channels", channel_name, chat)
+            Dim chat_info = New ChannelChatStorage(New IRC.ChannelChat(channel_name))
+            AddChat("Channels", channel_name, chat_info)
 
         Else
-            Dim chat = New ChatStorage(New IRC.UserChat(channel_name))
-            AddHandler chat.NickChanged, AddressOf ChangeChat
-            AddChat("Users", channel_name, chat)
+            Dim chat_info = New UserChatStorage(New IRC.UserChat(channel_name))
+            AddHandler chat_info.NickChanged, AddressOf ChangeChat
+            AddChat("Users", channel_name, chat_info)
         End If
 
     End Sub
@@ -118,13 +119,13 @@
         UserChat.Visible = False
         Select Case item.Group.Name
             Case "Server"
-                ServerChat.BindToChat(DirectCast(item.Tag, ChatStorage))
+                ServerChat.BindToChat(item.Tag)
                 ServerChat.Visible = True
             Case "Channels"
-                ChannelChat.BindToChat(DirectCast(item.Tag, ChatStorage))
+                ChannelChat.BindToChat(item.Tag)
                 ChannelChat.Visible = True
             Case "Users"
-                UserChat.BindtoChat(DirectCast(item.Tag, ChatStorage))
+                UserChat.BindtoChat(item.Tag)
                 UserChat.Visible = True
             Case Else
                 Throw New Exception("Group name not recognized.")

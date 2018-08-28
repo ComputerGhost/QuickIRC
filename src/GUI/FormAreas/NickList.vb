@@ -8,7 +8,7 @@
         _Chat_NickRemoved = AddressOf Chat_NickRemoved
     End Sub
 
-    Sub BindToChat(chat As ChatStorage)
+    Sub BindToChat(chat As ChatStorageBase)
 
         If BoundData IsNot Nothing Then
             RemoveHandler BoundData.NicksUpdated, _Chat_NicksUpdated
@@ -32,9 +32,9 @@
 
 #Region "Bound chat"
 
-    Private BoundData As ChatStorage
+    Private BoundData As ChannelChatStorage
 
-    Private _Chat_NicksUpdated As ChatStorage.NicksUpdatedEventHandler
+    Private _Chat_NicksUpdated As ChannelChatStorage.NicksUpdatedEventHandler
     Private Sub Chat_NicksUpdated(nicknames As SortedSet(Of String))
 
         If InvokeRequired Then
@@ -53,7 +53,7 @@
 
     End Sub
 
-    Private _Chat_NickAdded As ChatStorage.NickAddedEventHandler
+    Private _Chat_NickAdded As ChannelChatStorage.NickAddedEventHandler
     Private Sub Chat_NickAdded(nickname As String)
 
         If InvokeRequired Then
@@ -67,7 +67,7 @@
 
     End Sub
 
-    Private _Chat_NickChanged As ChatStorage.NickChangedEventHandler
+    Private _Chat_NickChanged As ChannelChatStorage.NickChangedEventHandler
     Private Sub Chat_NickChanged(old_nick As String, new_nick As String)
 
         If InvokeRequired Then
@@ -81,7 +81,7 @@
 
     End Sub
 
-    Private _Chat_NickRemoved As ChatStorage.NickRemovedEventHandler
+    Private _Chat_NickRemoved As ChannelChatStorage.NickRemovedEventHandler
     Private Sub Chat_NickRemoved(nickname As String)
 
         If InvokeRequired Then

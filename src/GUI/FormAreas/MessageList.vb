@@ -8,7 +8,7 @@ Public Class MessageList
         _Chat_MessageAdded = AddressOf Chat_MessageAdded
     End Sub
 
-    Sub BindToChat(chat As ChatStorage)
+    Sub BindToChat(chat As ChatStorageBase)
 
         If BoundData IsNot Nothing Then
             RemoveHandler BoundData.MessageAdded, _Chat_MessageAdded
@@ -27,9 +27,9 @@ Public Class MessageList
 
 #Region "Bound chat"
 
-    Private BoundData As ChatStorage
+    Private BoundData As ChatStorageBase
 
-    Private _Chat_MessageAdded As ChatStorage.MessageAddedEventHandler
+    Private _Chat_MessageAdded As ChatStorageBase.MessageAddedEventHandler
     Private Sub Chat_MessageAdded(message As IRC.Message)
 
         If InvokeRequired Then

@@ -94,6 +94,10 @@
     <Compile Include="Controls\ErrorProvider.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Data\ChannelChatStorage.vb" />
+    <Compile Include="Data\ChatStorageBase.vb" />
+    <Compile Include="Data\ServerChatStorage.vb" />
+    <Compile Include="Data\UserChatStorage.vb" />
     <Compile Include="FormAreas\ChannelChat.Designer.vb">
       <DependentUpon>ChannelChat.vb</DependentUpon>
     </Compile>
@@ -166,7 +170,6 @@
     <Compile Include="FormAreas\NickList.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Data\ChatStorage.vb" />
     <Compile Include="Data\ConnectionInfo.vb" />
   </ItemGroup>
   <ItemGroup>

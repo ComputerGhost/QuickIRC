@@ -1,7 +1,7 @@
 ﻿Public Class UserChat
 
 
-    Sub BindtoChat(chat As ChatStorage)
+    Sub BindtoChat(chat As UserChatStorage)
 
         If BoundChat IsNot Nothing Then
             BoundChat.Message = txtMessage.Text
@@ -22,7 +22,7 @@
 
 #Region "Internals"
 
-    Private BoundChat As ChatStorage
+    Private BoundChat As ChatStorageBase
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         'todo
