@@ -33,3 +33,7 @@ Currently, it is recommended to run the program from within Visual Studio. The `
 ## Bug Reporting
 
 Please use the Issues tab on our GitHub page to file bug reports. Or, you may contact me directly if you know my contact information.
+
+## Credits
+
+Some of the icons were obtained from <https://material.io/tools/icons/> and are released under a separate license.
