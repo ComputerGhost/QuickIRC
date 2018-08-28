@@ -28,7 +28,7 @@ Microsoft Windows is required. While QuickIRC may run on earlier versions, it is
 
 ## Installation
 
-Currently, it is recommended to run the program from within Visual Studio. QuickIRC should be set to run within the `out` folder.
+Currently, it is recommended to run the program from within Visual Studio. The `GUI` project should be set as the default project, and it should be set to run within the `out` folder.
 
 ## Bug Reporting
 
