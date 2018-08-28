@@ -83,6 +83,16 @@ Public Class ChannelChat
                     Connection.SendLine(String.Format("KICK {0} {1} :{2}", ChannelName, username, comment))
                 End If
 
+            Case "ME" ' ME [action]
+
+                Dim action_text = tokenizer.ReadRemaining()
+
+                If action_text Is Nothing Then
+                    Throw New SyntaxError("ME expects a parameter.")
+                End If
+
+                Connection.SendCTCPResponse(ChannelName, "ACTION", action_text)
+
             Case "PART" ' PART [channel] [message]
 
                 If tokenizer.IsChannel() Then

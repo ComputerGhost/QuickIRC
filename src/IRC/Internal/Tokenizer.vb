@@ -9,7 +9,7 @@ Public Class Tokenizer
 
 
     Sub New(server_limits As ServerLimits, text As String)
-        Me.ServerLimits = ServerLimits
+        Me.ServerLimits = server_limits
         Me.Text = text
     End Sub
 

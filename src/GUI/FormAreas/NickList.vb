@@ -8,7 +8,7 @@
         _Chat_NickRemoved = AddressOf Chat_NickRemoved
     End Sub
 
-    Sub BindToChat(chat As ChatStorageBase)
+    Sub BindToChat(chat As ChannelChatStorage)
 
         If BoundData IsNot Nothing Then
             RemoveHandler BoundData.NicksUpdated, _Chat_NicksUpdated
@@ -18,8 +18,8 @@
         End If
 
         BoundData = chat
+        SetNicks(BoundData.Nicks)
 
-        Nicks.Clear()
         If BoundData IsNot Nothing Then
             AddHandler BoundData.NicksUpdated, _Chat_NicksUpdated
             AddHandler BoundData.NickAdded, _Chat_NickAdded
@@ -42,14 +42,7 @@
             Exit Sub
         End If
 
-        Nicks.BeginUpdate()
-        Nicks.Items.Clear()
-        For Each nickname In nicknames
-            Nicks.Items.Add(New ListViewItem With {
-                .Text = nickname,
-                .Name = nickname})
-        Next
-        Nicks.EndUpdate()
+        SetNicks(nicknames)
 
     End Sub
 
@@ -61,7 +54,7 @@
             Exit Sub
         End If
 
-        Nicks.Items.Add(New ListViewItem With {
+        lstNicks.Items.Add(New ListViewItem With {
             .Text = nickname,
             .Name = nickname})
 
@@ -75,7 +68,7 @@
             Exit Sub
         End If
 
-        Dim item = Nicks.Items.Item(old_nick)
+        Dim item = lstNicks.Items.Item(old_nick)
         item.Text = new_nick
         item.Name = new_nick
 
@@ -89,7 +82,29 @@
             Exit Sub
         End If
 
-        Nicks.Items.RemoveByKey(nickname)
+        lstNicks.Items.RemoveByKey(nickname)
+
+    End Sub
+
+#End Region
+
+#Region "Internals"
+
+    Private Sub SetNicks(nicknames As SortedSet(Of String))
+
+        lstNicks.Items.Clear()
+
+        If nicknames Is Nothing Then
+            Exit Sub
+        End If
+
+        lstNicks.BeginUpdate()
+        For Each nickname In nicknames
+            lstNicks.Items.Add(New ListViewItem With {
+                .Text = nickname,
+                .Name = nickname})
+        Next
+        lstNicks.EndUpdate()
 
     End Sub
 

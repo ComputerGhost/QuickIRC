@@ -22,29 +22,29 @@ Partial Class NickList
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Nicks = New System.Windows.Forms.ListView()
+        Me.lstNicks = New System.Windows.Forms.ListView()
         Me.SuspendLayout()
         '
-        'Nicks
+        'lstNicks
         '
-        Me.Nicks.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Nicks.Location = New System.Drawing.Point(0, 0)
-        Me.Nicks.MultiSelect = False
-        Me.Nicks.Name = "Nicks"
-        Me.Nicks.Size = New System.Drawing.Size(150, 150)
-        Me.Nicks.TabIndex = 0
-        Me.Nicks.UseCompatibleStateImageBehavior = False
-        Me.Nicks.View = System.Windows.Forms.View.List
+        Me.lstNicks.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lstNicks.Location = New System.Drawing.Point(0, 0)
+        Me.lstNicks.MultiSelect = False
+        Me.lstNicks.Name = "lstNicks"
+        Me.lstNicks.Size = New System.Drawing.Size(150, 150)
+        Me.lstNicks.TabIndex = 0
+        Me.lstNicks.UseCompatibleStateImageBehavior = False
+        Me.lstNicks.View = System.Windows.Forms.View.List
         '
         'NickList
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.Controls.Add(Me.Nicks)
+        Me.Controls.Add(Me.lstNicks)
         Me.Name = "NickList"
         Me.ResumeLayout(False)
 
     End Sub
 
-    Friend WithEvents Nicks As ListView
+    Friend WithEvents lstNicks As ListView
 End Class
