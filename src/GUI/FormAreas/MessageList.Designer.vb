@@ -22,26 +22,27 @@ Partial Class MessageList
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.MessagesView = New System.Windows.Forms.TextBox()
+        Me.txtMessages = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
-        'MessagesView
+        'txtMessages
         '
-        Me.MessagesView.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.MessagesView.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.MessagesView.Location = New System.Drawing.Point(0, 0)
-        Me.MessagesView.Multiline = True
-        Me.MessagesView.Name = "MessagesView"
-        Me.MessagesView.ReadOnly = True
-        Me.MessagesView.Size = New System.Drawing.Size(420, 338)
-        Me.MessagesView.TabIndex = 0
+        Me.txtMessages.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.txtMessages.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.txtMessages.Location = New System.Drawing.Point(0, 0)
+        Me.txtMessages.Multiline = True
+        Me.txtMessages.Name = "txtMessages"
+        Me.txtMessages.ReadOnly = True
+        Me.txtMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.txtMessages.Size = New System.Drawing.Size(420, 338)
+        Me.txtMessages.TabIndex = 0
         '
         'MessageList
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Controls.Add(Me.MessagesView)
+        Me.Controls.Add(Me.txtMessages)
         Me.Name = "MessageList"
         Me.Size = New System.Drawing.Size(420, 338)
         Me.ResumeLayout(False)
@@ -49,5 +50,5 @@ Partial Class MessageList
 
     End Sub
 
-    Friend WithEvents MessagesView As TextBox
+    Friend WithEvents txtMessages As TextBox
 End Class

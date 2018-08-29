@@ -16,7 +16,7 @@ Public Class MessageList
 
         BoundData = chat
 
-        MessagesView.Clear()
+        txtMessages.Clear()
         If BoundData IsNot Nothing Then
             AddMessages(BoundData.Messages)
             AddHandler BoundData.MessageAdded, _Chat_MessageAdded
@@ -24,6 +24,17 @@ Public Class MessageList
 
     End Sub
 
+
+#Region "Event Handling"
+
+    Sub Me_VisibleChanged() Handles Me.VisibleChanged
+        If Me.Visible Then
+            txtMessages.SelectionStart = txtMessages.Text.Length
+            txtMessages.ScrollToCaret()
+        End If
+    End Sub
+
+#End Region
 
 #Region "Bound chat"
 
@@ -47,18 +58,18 @@ Public Class MessageList
 
     Private Sub AddMessage(message As IRC.Message)
 
-        If MessagesView.Text.Length Then
-            MessagesView.AppendText(vbCrLf)
+        If txtMessages.Text.Length Then
+            txtMessages.AppendText(vbCrLf)
         End If
 
-        MessagesView.AppendText(FormatMessage(message))
+        txtMessages.AppendText(FormatMessage(message))
 
     End Sub
 
     Private Sub AddMessages(messages As IEnumerable(Of IRC.Message))
 
-        If MessagesView.Text.Length Then
-            MessagesView.AppendText(vbCrLf)
+        If txtMessages.Text.Length Then
+            txtMessages.AppendText(vbCrLf)
         End If
 
         Dim builder As New StringBuilder()
@@ -66,7 +77,7 @@ Public Class MessageList
             FormatMessage(builder, message)
             builder.Append(vbCrLf)
         Next
-        MessagesView.AppendText(builder.ToString())
+        txtMessages.AppendText(builder.ToString())
 
     End Sub
 
