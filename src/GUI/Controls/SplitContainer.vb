@@ -6,7 +6,8 @@
 ' when restoring from a maximized state. This is probably due to a limitation
 ' of the Windows stack size when dispatching messages. To work around this 
 ' issue, the form can be sized down 1 pixel and then sized up 1 pixel when 
-' restoring from a maximized state.
+' restoring from a maximized state. The SplitContainer should also be docked,
+' not anchored, to handle weird sizes correctly.
 '
 Public Class SplitContainer
     Inherits System.Windows.Forms.SplitContainer
@@ -33,7 +34,7 @@ Public Class SplitContainer
     Private Sub Me_SizeChanged() Handles MyBase.Resize
 
         ' Happens on minimize
-        If ClientSize = Size.Empty Then
+        If ClientSize.Width = 0 Or ClientSize.Height = 0 Then
             Exit Sub
         End If
 
