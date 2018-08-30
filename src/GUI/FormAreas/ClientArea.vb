@@ -89,29 +89,27 @@
         RemoveChat(channel_name)
     End Sub
 
-    Private Sub HandleUserMessage(message As IRC.Message)
+    Private Sub HandleUserMessage(other_nick As String, message As IRC.Message)
 
         If InvokeRequired Then
-            Invoke(Sub() HandleUserMessage(message))
+            Invoke(Sub() HandleUserMessage(other_nick, message))
             Exit Sub
         End If
 
-        Dim nickname = message.Source.Name
-
-        If lstChannels.Items.ContainsKey(nickname) Then
+        If lstChannels.Items.ContainsKey(other_nick) Then
             Exit Sub
         End If
 
-        Dim user_chat = New IRC.UserChat(nickname)
+        Dim user_chat = New IRC.UserChat(other_nick)
         Connection.RegisterChat(user_chat)
 
         Dim chat_info = New UserChatStorage(user_chat)
         chat_info.Messages.Add(message)
         AddHandler chat_info.NickChanged, AddressOf ChangeChat
 
-        Dim list_item = New ListViewItem({nickname}) With {
+        Dim list_item = New ListViewItem({other_nick}) With {
             .Group = lstChannels.Groups("Users"),
-            .Name = nickname,
+            .Name = other_nick,
             .Tag = chat_info}
         lstChannels.Items.Add(list_item)
 

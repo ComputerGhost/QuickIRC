@@ -19,7 +19,7 @@ Public Class StandardHandler
     Property OnChannelJoined As OnChannelJoinedHandler
     Property OnChannelParted As OnChannelPartedHandler
 
-    Delegate Sub OnUserMessageHandler(message As Message)
+    Delegate Sub OnUserMessageHandler(other_nick As String, message As Message)
     Property OnUserMessage As OnUserMessageHandler
 
 
@@ -72,7 +72,7 @@ Public Class StandardHandler
         ' Notify of any user messages
         If {"PRIVMSG", "NOTICE"}.Contains(message.Verb) Then
             If message.Parameters(0) = Connection.Nickname Then
-                OnUserMessage?.Invoke(message)
+                OnUserMessage?.Invoke(message.Source.Name, message)
             End If
         End If
 
@@ -164,7 +164,7 @@ Public Class StandardHandler
         ' Notify of any user messages
         If {"PRIVMSG", "NOTICE"}.Contains(message.Verb) Then
             If message.Parameters(0) = Connection.Nickname Then
-                OnUserMessage?.Invoke(message)
+                OnUserMessage?.Invoke(Connection.Nickname, message)
             End If
         End If
 
@@ -331,6 +331,5 @@ Public Class StandardHandler
         }
 
 #End Region
-
 
 End Class
