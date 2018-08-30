@@ -4,6 +4,8 @@
 '
 ' A StandardHandler should be registered with the highest priority.
 '
+Imports IRC
+
 Public Class StandardHandler
     Inherits ChatBase
 
@@ -16,6 +18,9 @@ Public Class StandardHandler
     Delegate Sub OnChannelPartedHandler(channel_name As String)
     Property OnChannelJoined As OnChannelJoinedHandler
     Property OnChannelParted As OnChannelPartedHandler
+
+    Delegate Sub OnUserMessageHandler(message As Message)
+    Property OnUserMessage As OnUserMessageHandler
 
 
     '
@@ -63,6 +68,13 @@ Public Class StandardHandler
 
         ' Cleanup our ignore lists
         CleanupDOS()
+
+        ' Notify of any user messages
+        If {"PRIVMSG", "NOTICE"}.Contains(message.Verb) Then
+            If message.Parameters(0) = Connection.Nickname Then
+                OnUserMessage?.Invoke(message)
+            End If
+        End If
 
         ' We are interested in a select few at this level.
         Select Case command
@@ -144,6 +156,20 @@ Public Class StandardHandler
         End Select
 
         MyBase.HandleMessageReceived(message)
+
+    End Sub
+
+    Protected Friend Overrides Sub HandleMessageSent(message As Message)
+
+        ' Notify of any user messages
+        If {"PRIVMSG", "NOTICE"}.Contains(message.Verb) Then
+            If message.Parameters(0) = Connection.Nickname Then
+                OnUserMessage?.Invoke(message)
+            End If
+        End If
+
+        ' Normal handling
+        MyBase.HandleMessageSent(message)
 
     End Sub
 

@@ -11,32 +11,24 @@
 
         Connection.RegisterChat(New IRC.StandardHandler() With {
             .OnChannelJoined = AddressOf HandleChannelJoined,
-            .OnChannelParted = AddressOf HandleChannelParted})
+            .OnChannelParted = AddressOf HandleChannelParted,
+            .OnUserMessage = AddressOf HandleUserMessage})
         Connection.RegisterChat(connection_info.Connector)
 
-        AddChat("Server", "server", New ServerChatStorage(New IRC.ServerChat()))
-        AddChat("Server", "raw", New ServerChatStorage(New IRC.ChatBase()))
+        Dim server_chat = New IRC.ServerChat()
+        Connection.RegisterChat(server_chat)
+        lstChannels.Items.Add(New ListViewItem({"server"}) With {
+            .Group = lstChannels.Groups("Server"),
+            .Selected = True,
+            .Tag = New ServerChatStorage(server_chat)})
+
+        Dim raw_chat = New IRC.ChatBase()
+        Connection.RegisterChat(raw_chat)
+        lstChannels.Items.Add(New ListViewItem({"raw"}) With {
+            .Group = lstChannels.Groups("Server"),
+            .Tag = New ServerChatStorage(raw_chat)})
 
         Connection.Connect()
-
-    End Sub
-
-    Sub AddChat(group_name As String, chat_name As String, chat_info As ChatStorageBase)
-
-        If InvokeRequired Then
-            Invoke(Sub() AddChat(group_name, chat_name, chat_info))
-            Exit Sub
-        End If
-
-        Connection.RegisterChat(chat_info.Chat)
-
-        Dim list_item = New ListViewItem({chat_name}) With {
-            .Group = lstChannels.Groups(group_name),
-            .Name = If(group_name = "Server", Nothing, chat_name),
-            .Tag = chat_info}
-        lstChannels.Items.Add(list_item)
-
-        list_item.Selected = True
 
     End Sub
 
@@ -76,23 +68,53 @@
 
     Private Sub HandleChannelJoined(channel_name As String)
 
+        If InvokeRequired Then
+            Invoke(Sub() HandleChannelJoined(channel_name))
+            Exit Sub
+        End If
+
         If channel_name.Length = 0 Then Exit Sub
 
-        Dim prefixes = Connection.ServerLimits.ChanTypes
-        If prefixes.Contains(channel_name(0)) Then
-            Dim chat_info = New ChannelChatStorage(New IRC.ChannelChat(channel_name))
-            AddChat("Channels", channel_name, chat_info)
-
-        Else
-            Dim chat_info = New UserChatStorage(New IRC.UserChat(channel_name))
-            AddHandler chat_info.NickChanged, AddressOf ChangeChat
-            AddChat("Users", channel_name, chat_info)
-        End If
+        Dim channel_chat = New IRC.ChannelChat(channel_name)
+        Connection.RegisterChat(channel_chat)
+        lstChannels.Items.Add(New ListViewItem({channel_name}) With {
+            .Group = lstChannels.Groups("Channels"),
+            .Name = channel_name,
+            .Selected = True,
+            .Tag = New ChannelChatStorage(channel_chat)})
 
     End Sub
 
     Private Sub HandleChannelParted(channel_name As String)
         RemoveChat(channel_name)
+    End Sub
+
+    Private Sub HandleUserMessage(message As IRC.Message)
+
+        If InvokeRequired Then
+            Invoke(Sub() HandleUserMessage(message))
+            Exit Sub
+        End If
+
+        Dim nickname = message.Source.Name
+
+        If lstChannels.Items.ContainsKey(nickname) Then
+            Exit Sub
+        End If
+
+        Dim user_chat = New IRC.UserChat(nickname)
+        Connection.RegisterChat(user_chat)
+
+        Dim chat_info = New UserChatStorage(user_chat)
+        chat_info.Messages.Add(message)
+        AddHandler chat_info.NickChanged, AddressOf ChangeChat
+
+        Dim list_item = New ListViewItem({nickname}) With {
+            .Group = lstChannels.Groups("Users"),
+            .Name = nickname,
+            .Tag = chat_info}
+        lstChannels.Items.Add(list_item)
+
     End Sub
 
 #End Region
@@ -135,14 +157,6 @@
 
     Private Sub lstChannels_Resize() Handles lstChannels.Resize
         lstChannels.Columns(0).Width = lstChannels.ClientSize.Width
-    End Sub
-
-    Private Sub lstChannels_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstChannels.SelectedIndexChanged
-
-    End Sub
-
-    Private Sub lstChannels_Resize(sender As Object, e As EventArgs) Handles lstChannels.Resize
-
     End Sub
 
 #End Region

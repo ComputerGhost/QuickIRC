@@ -71,6 +71,10 @@ Public Class UserChat
 
     Protected Friend Overrides Sub HandleMessageReceived(message As Message)
 
+        If Not ShouldProcess(message) Then
+            Exit Sub
+        End If
+
         Dim sender = message.Source.Name
 
         Select Case message.Verb
