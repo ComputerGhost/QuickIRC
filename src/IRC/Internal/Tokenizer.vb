@@ -94,7 +94,7 @@ Public Class Tokenizer
     ' Special cases
 
     Function ReadCommand() As String
-        Return ReadWord().ToUpper()
+        Return ReadWord()?.ToUpper()
     End Function
 
     Function ReadChannels() As String
