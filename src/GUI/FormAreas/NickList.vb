@@ -5,6 +5,7 @@
         _Chat_NicksUpdated = AddressOf Chat_NicksUpdated
         _Chat_NickAdded = AddressOf Chat_NickAdded
         _Chat_NickChanged = AddressOf Chat_NickChanged
+        _Chat_NickModeChanged = AddressOf Chat_NickModeChanged
         _Chat_NickRemoved = AddressOf Chat_NickRemoved
     End Sub
 
@@ -14,6 +15,7 @@
             RemoveHandler BoundData.NicksUpdated, _Chat_NicksUpdated
             RemoveHandler BoundData.NickAdded, _Chat_NickAdded
             RemoveHandler BoundData.NickChanged, _Chat_NickChanged
+            RemoveHandler BoundData.NickModeChanged, _Chat_NickModeChanged
             RemoveHandler BoundData.NickRemoved, _Chat_NickRemoved
         End If
 
@@ -24,6 +26,7 @@
             AddHandler BoundData.NicksUpdated, _Chat_NicksUpdated
             AddHandler BoundData.NickAdded, _Chat_NickAdded
             AddHandler BoundData.NickChanged, _Chat_NickChanged
+            AddHandler BoundData.NickModeChanged, _Chat_NickModeChanged
             AddHandler BoundData.NickRemoved, _Chat_NickRemoved
         End If
 
@@ -35,7 +38,7 @@
     Private BoundData As ChannelChatStorage
 
     Private _Chat_NicksUpdated As ChannelChatStorage.NicksUpdatedEventHandler
-    Private Sub Chat_NicksUpdated(nicknames As SortedSet(Of String))
+    Private Sub Chat_NicksUpdated(nicknames As SortedDictionary(Of String, String))
 
         If InvokeRequired Then
             Invoke(Sub() Chat_NicksUpdated(nicknames))
@@ -69,8 +72,21 @@
         End If
 
         Dim item = lstNicks.Items.Item(old_nick)
-        item.Text = new_nick
+        item.Text = item.Text.Replace(old_nick, new_nick)
         item.Name = new_nick
+
+    End Sub
+
+    Private _Chat_NickModeChanged As ChannelChatStorage.NickModeChangedEventHandler
+    Private Sub Chat_NickModeChanged(nickname As String, prefix As String)
+
+        If InvokeRequired Then
+            Invoke(Sub() Chat_NickModeChanged(nickname, prefix))
+            Exit Sub
+        End If
+
+        Dim item = lstNicks.Items.Item(nickname)
+        item.Text = prefix & nickname
 
     End Sub
 
@@ -90,7 +106,7 @@
 
 #Region "Internals"
 
-    Private Sub SetNicks(nicknames As SortedSet(Of String))
+    Private Sub SetNicks(nicknames As SortedDictionary(Of String, String))
 
         lstNicks.Items.Clear()
 
@@ -101,8 +117,8 @@
         lstNicks.BeginUpdate()
         For Each nickname In nicknames
             lstNicks.Items.Add(New ListViewItem With {
-                .Text = nickname,
-                .Name = nickname})
+                .Text = nickname.Value & nickname.Key,
+                .Name = nickname.Key})
         Next
         lstNicks.EndUpdate()
 
