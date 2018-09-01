@@ -45,15 +45,16 @@ Public Class UserChat
 
 #Region "Internals"
 
-    Private Function ShouldProcess(message As Message) As Boolean
+    ' Commands that have us/them as a target
+    Shared TargetCommands As New HashSet(Of String) From {
+        "NOTICE", "PRIVMSG"}
 
-        ' Commands that have us as a target
-        Static TargetCommands As New HashSet(Of String) From {
-            "NOTICE", "PRIVMSG"}
+    ' Other commands that we are interested in
+    Shared OtherCommands As New HashSet(Of String) From {
+        "AWAY", "NICK", "QUIT"}
 
-        ' Other commands that we are interested in
-        Static OtherCommands As New HashSet(Of String) From {
-            "AWAY", "NICK", "QUIT"}
+
+    Private Function ShouldProcessIncoming(message As Message) As Boolean
 
         Dim command = message.Verb
 
@@ -69,9 +70,23 @@ Public Class UserChat
 
     End Function
 
+    Private Function ShouldProcessOutgoing(message As Message) As Boolean
+
+        Dim command = message.Verb
+
+        If TargetCommands.Contains(command) Then
+            Return (UserName = message.Parameters(0))
+        ElseIf OtherCommands.Contains(command) Then
+            Return True
+        Else
+            Return False
+        End If
+
+    End Function
+
     Protected Friend Overrides Sub HandleMessageReceived(message As Message)
 
-        If Not ShouldProcess(message) Then
+        If Not ShouldProcessIncoming(message) Then
             Exit Sub
         End If
 
@@ -90,7 +105,7 @@ Public Class UserChat
     End Sub
 
     Protected Friend Overrides Sub HandleMessageSent(message As Message)
-        If ShouldProcess(message) Then
+        If ShouldProcessOutgoing(message) Then
             MyBase.HandleMessageSent(message)
         End If
     End Sub
