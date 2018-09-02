@@ -8,6 +8,7 @@ body {
 }
 
 main {
+	display: block;
 	margin: 0 auto;
 	max-width: 1024px;
 	text-align: left;
