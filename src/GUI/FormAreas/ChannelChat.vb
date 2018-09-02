@@ -28,7 +28,7 @@
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Dim chat = DirectCast(BoundChat.Chat, IRC.ChannelChat)
-        chat.ProcessAndSend("/PART " & chat.ChannelName)
+        chat.ProcessAndSend("/PART")
     End Sub
 
     Private Sub txtMessage_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtMessage.KeyPress

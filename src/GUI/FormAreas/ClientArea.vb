@@ -106,6 +106,7 @@
         Dim chat_info = New UserChatStorage(user_chat)
         chat_info.Messages.Add(message)
         AddHandler chat_info.NickChanged, AddressOf ChangeChat
+        AddHandler chat_info.ChannelParted, AddressOf HandleChannelParted
 
         Dim list_item = New ListViewItem({other_nick}) With {
             .Group = lstChannels.Groups("Users"),

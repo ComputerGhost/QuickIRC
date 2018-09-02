@@ -25,7 +25,8 @@
     Private BoundChat As ChatStorageBase
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
-        'todo
+        Dim chat = DirectCast(BoundChat.Chat, IRC.UserChat)
+        chat.ProcessAndSend("/PART")
     End Sub
 
     Private Sub txtMessage_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtMessage.KeyPress

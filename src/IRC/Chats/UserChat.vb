@@ -13,6 +13,9 @@ Public Class UserChat
     Property OnUserChanged As UserChangedDelegate
     Property OnUserQuit As UserQuitDelegate
 
+    Delegate Sub PartDelegate(username As String)
+    Property OnPart As PartDelegate
+
 
     Property UserName As String
 
@@ -34,6 +37,9 @@ Public Class UserChat
         End If
 
         Select Case tokenizer.ReadCommand()
+            Case "PART" ' PART
+                Connection.UnregisterChat(Me)
+                OnPart?.Invoke(UserName)
             Case "SAY" ' SAY <message>
                 Dim message = If(tokenizer.ReadRemaining(), "")
                 Connection.SendLine(String.Format("PRIVMSG {0} :{1}", UserName, message))
