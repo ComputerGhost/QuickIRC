@@ -106,6 +106,10 @@
 
 #Region "Internals"
 
+    Private Sub Me_SizeChanged() Handles Me.SizeChanged
+        lstNicks.Columns(0).Width = lstNicks.ClientSize.Width
+    End Sub
+
     Private Sub SetNicks(nicknames As SortedDictionary(Of String, String))
 
         lstNicks.Items.Clear()
