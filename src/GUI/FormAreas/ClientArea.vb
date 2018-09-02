@@ -82,6 +82,7 @@
             .Name = channel_name,
             .Selected = True,
             .Tag = New ChannelChatStorage(channel_chat)})
+        ChannelChat.Focus()
 
     End Sub
 
@@ -120,12 +121,34 @@
 
 #Region "UI Events"
 
+    ' We want the server chat to have focus first
+    Private Sub Me_Load() Handles Me.Load
+        BeginInvoke(Sub() ServerChat.Focus())
+    End Sub
+
     ' Fixes a "limitation" of child controls not getting the resize event.
-    Private Sub Me_SizeChanged() Handles MyBase.Resize
+    Private Sub Me_SizeChanged() Handles Me.Resize
         SplitContainer1.Width += 1
         SplitContainer1.Width -= 1
     End Sub
 
+    ' Otherwise, we lose focus after selection change
+    Private Sub lstChannels_MouseUp() Handles lstChannels.MouseUp
+
+        If lstChannels.SelectedItems.Count = 0 Then
+            Exit Sub
+        End If
+
+        Select Case lstChannels.SelectedItems(0).Group.Name
+            Case "Server"
+                ServerChat.Focus()
+            Case "Channels"
+                ChannelChat.Focus()
+            Case "Users"
+                UserChat.Focus()
+        End Select
+
+    End Sub
 
     Private Sub lstChannels_SelectedIndexChanged() Handles lstChannels.SelectedIndexChanged
 
