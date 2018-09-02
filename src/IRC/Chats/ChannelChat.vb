@@ -159,7 +159,9 @@ Public Class ChannelChat
 
         Dim command = message.Verb
 
-        If TargetCommands1.Contains(command) Then
+        If message.Source.Name Is Nothing Then ' sent message
+            Return True
+        ElseIf TargetCommands1.Contains(command) Then
             Return (ChannelName = message.Parameters(0))
         ElseIf TargetCommands2.Contains(command) Then
             Return (ChannelName = message.Parameters(1))
