@@ -151,7 +151,7 @@ Public Class ChannelChat
 
         ' Commands from a sender in the channel
         Static SenderCommands As New HashSet(Of String) From {
-            "AWAY", "NICK"}
+            "AWAY", "NICK", "QUIT"}
 
         ' Other commands we're interested in
         Static OtherCommands As New HashSet(Of String) From {
@@ -297,6 +297,13 @@ Public Class ChannelChat
                 OnUserChanged?.Invoke(sender, new_nick)
 
             Case "PART" ' <sender> PART <target> [comment]
+
+                Using lock As New ThreadLock(Users)
+                    Users.Remove(sender)
+                End Using
+                OnUserParted?.Invoke(sender)
+
+            Case "QUIT" ' <sender> QUIT [comment]
 
                 Using lock As New ThreadLock(Users)
                     Users.Remove(sender)
