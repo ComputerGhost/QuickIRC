@@ -24,6 +24,12 @@
 
     Private BoundChat As ChatStorageBase
 
+    Private Sub Me_VisibleChanged() Handles Me.VisibleChanged
+        If Me.Visible Then
+            BeginInvoke(Sub() txtMessage.Select())
+        End If
+    End Sub
+
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Dim chat = DirectCast(BoundChat.Chat, IRC.UserChat)
         chat.ProcessAndSend("/PART")

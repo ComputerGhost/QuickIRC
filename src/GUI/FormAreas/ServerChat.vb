@@ -25,6 +25,12 @@
 
     Private BoundChat As ChatStorageBase
 
+    Private Sub Me_VisibleChanged() Handles Me.VisibleChanged
+        If Me.Visible Then
+            BeginInvoke(Sub() txtMessage.Select())
+        End If
+    End Sub
+
     Private Sub txtMessage_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtMessage.KeyPress
         Select Case e.KeyChar
 

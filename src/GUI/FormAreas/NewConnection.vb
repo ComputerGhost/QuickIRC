@@ -11,6 +11,12 @@
 
     End Sub
 
+    Private Sub Me_VisibleChanged() Handles Me.VisibleChanged
+        If Me.Visible Then
+            txtHost.Select()
+        End If
+    End Sub
+
     Private Sub btnConnect_Click() Handles btnConnect.Click
 
         If Not ValidateChildren() Or ErrorProvider.HasErrors Then
@@ -169,7 +175,6 @@
     End Sub
 
 #End Region
-
 
 #Region "Internals"
 
