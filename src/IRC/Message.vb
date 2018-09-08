@@ -4,6 +4,7 @@ Imports System.Text.RegularExpressions
 Public Class Message
 
     Property TimeStamp As Date = Now
+    Property Direction As MessageDirection
     Property Source As MessageSource
     Property Verb As String
     Property Parameters As New List(Of String)
@@ -16,7 +17,7 @@ Public Class Message
     Private _Raw As String
 
 
-    Shared Function Parse(line As String) As Message
+    Shared Function Parse(line As String, direction As MessageDirection) As Message
 
         ' [tags] [source] <command> [parameters]
         Dim groups = Regex.Match(line, "^(?:@([^ ]+) )?(?::([^ ]+) )?([^ ]+) ?(.*?)$").Groups
@@ -26,6 +27,7 @@ Public Class Message
 
         Dim ret = New Message With {
             ._Raw = line,
+            .Direction = direction,
             .Source = MessageSource.Parse(groups(2).Value),
             .Verb = groups(3).Value.ToUpper()}
 

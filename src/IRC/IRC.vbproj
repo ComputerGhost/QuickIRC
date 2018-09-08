@@ -78,6 +78,7 @@
     <Compile Include="Internal\InternalConnection.vb" />
     <Compile Include="Internal\Tokenizer.vb" />
     <Compile Include="Message.vb" />
+    <Compile Include="MessageDirection.vb" />
     <Compile Include="MessageSource.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
