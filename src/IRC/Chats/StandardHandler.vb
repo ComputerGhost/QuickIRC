@@ -62,7 +62,9 @@ Public Class StandardHandler
             Dim param_info = IncomingCommands(command)
             Dim param_count = message.Parameters.Count
             If param_count < param_info.Min Or param_count > param_info.Max Then
-                Throw New SyntaxError("Incorrect number of parameters for command.")
+                Throw New SyntaxError(String.Format(
+                    "Incorrect number of parameters for command '{0}'.",
+                    message.Verb))
             End If
         End If
 
@@ -315,11 +317,23 @@ Public Class StandardHandler
     ' Incoming commands that we'll support and syntax-check
     Private Shared IncomingCommands As New Dictionary(Of String, ParameterInfo) From {
         {"001", New ParameterInfo With {.Count = 2}},           ' 001 <nick> <message>
+        {"002", New ParameterInfo With {.Count = 2}},           ' 002 <me> <text>
+        {"003", New ParameterInfo With {.Count = 2}},           ' 003 <me> <text>
+        {"004", New ParameterInfo With {.Min = 5, .Max = 6}},   ' 004 <me> <server> <version> <usermodes> <chanmodes>
+        {"005", New ParameterInfo With {.Min = 2, .Max = 93}},  ' 005 <me> <supported>... <text>
+        {"251", New ParameterInfo With {.Count = 2}},           ' 251 <me> <text>
+        {"252", New ParameterInfo With {.Count = 3}},           ' 252 <me> <count> <text>
+        {"253", New ParameterInfo With {.Count = 3}},           ' 253 <me> <count> <text>
+        {"254", New ParameterInfo With {.Count = 3}},           ' 254 <me> <count> <text>
+        {"255", New ParameterInfo With {.Count = 2}},           ' 255 <me> <text>
         {"328", New ParameterInfo With {.Count = 3}},           ' 328 <me> <channel> <service>
         {"332", New ParameterInfo With {.Count = 3}},           ' 332 <me> <channel> <topic>
         {"333", New ParameterInfo With {.Count = 4}},           ' 333 <me> <channel> <user> <timestamp>
         {"353", New ParameterInfo With {.Min = 3, .Max = 4}},   ' 353 <me> <type> <channel> <users>
         {"366", New ParameterInfo With {.Count = 3}},           ' 366 <me> <channel> <message>
+        {"372", New ParameterInfo With {.Count = 2}},           ' 372 <me> <text>
+        {"375", New ParameterInfo With {.Count = 2}},           ' 375 <me> <text>
+        {"376", New ParameterInfo With {.Count = 2}},           ' 376 <me> <text>
         {"JOIN", New ParameterInfo With {.Count = 1}},          ' JOIN <channel>
         {"MODE", New ParameterInfo With {.Min = 1, .Max = 9}},  ' MODE <target> [lots-of-params]
         {"NICK", New ParameterInfo With {.Count = 1}},          ' NICK <nickname>
