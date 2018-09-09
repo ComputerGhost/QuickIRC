@@ -94,6 +94,7 @@
     <Compile Include="Controls\ErrorProvider.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\RichTextBoxExtensions.vb" />
     <Compile Include="Data\ChannelChatStorage.vb" />
     <Compile Include="Data\ChatStorageBase.vb" />
     <Compile Include="Data\ServerChatStorage.vb" />
@@ -221,7 +222,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Algorithms\Algorithms.vbproj">
-      <Project>{f78a745c-c03a-4244-8369-0adad5b62944}</Project>
+      <Project>{70c0d8c0-dcbb-4c7d-839c-ff56e6c5edf1}</Project>
       <Name>Algorithms</Name>
     </ProjectReference>
     <ProjectReference Include="..\IRC\IRC.vbproj">
