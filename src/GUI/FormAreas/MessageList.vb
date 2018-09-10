@@ -90,8 +90,10 @@ Public Class MessageList
         End If
 
         Dim builder As New RtfBuilder
+        builder.ParagraphSpacing = 72
         builder.LineIndent = 936
         builder.FirstLineIndent = -936
+        builder.LineSpacing = 1.25
 
         ' Since our timestamp doesn't go above hours, notify when switching days
         If LastDate <> Today Then

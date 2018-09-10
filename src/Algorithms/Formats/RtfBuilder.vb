@@ -3,9 +3,10 @@ Imports System.Text
 
 Public Class RtfBuilder
 
-    Property ParagraphSpacing As Integer = 72
+    Property ParagraphSpacing As Integer = 0
     Property FirstLineIndent As Integer = 0
     Property LineIndent As Integer = 0
+    Property LineSpacing As Double = 1
     Property PagePadding As Integer = 36
 
 
@@ -51,10 +52,11 @@ Public Class RtfBuilder
     ' Reset formatting for the new paragraph
     Public Sub StartParagraph()
         TextBuilder.AppendFormat(
-            "\pard \fi{0}\li{1}\sb{2}\ri{3} ",
+            "\pard \fi{0}\li{1}\sb{2}\sl{3}\slmult1\ri{4} ",
             FirstLineIndent + PagePadding,
             LineIndent + PagePadding,
             ParagraphSpacing,
+            Math.Floor(LineSpacing * 240),
             PagePadding)
     End Sub
 
