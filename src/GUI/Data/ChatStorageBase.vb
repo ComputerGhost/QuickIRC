@@ -25,6 +25,7 @@ Public Class ChatStorageBase
     Private Sub HandleConnectionOpened()
 
         Dim message As New IRC.Message With {
+            .Direction = IRC.MessageDirection.Client,
             .Source = New IRC.MessageSource("QuickIRC"),
             .Parameters = {"Connection established."}.ToList()}
         Using lock As New ThreadLock(Messages)
@@ -40,6 +41,7 @@ Public Class ChatStorageBase
 
         Dim message_text = String.Format("Connection failed. ({0})", ex.Message)
         Dim message As New IRC.Message With {
+            .Direction = IRC.MessageDirection.Client,
             .Source = New IRC.MessageSource("QuickIRC"),
             .Parameters = {message_text}.ToList()}
         Using lock As New ThreadLock(Messages)
@@ -54,6 +56,7 @@ Public Class ChatStorageBase
     Private Sub HandleConnectionClosed()
 
         Dim message As New IRC.Message With {
+            .Direction = IRC.MessageDirection.Client,
             .Source = New IRC.MessageSource("QuickIRC"),
             .Parameters = {"Connection closed."}.ToList()}
         Using lock As New ThreadLock(Messages)

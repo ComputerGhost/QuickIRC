@@ -22,33 +22,33 @@ Partial Class MessageList
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.txtMessages = New System.Windows.Forms.TextBox()
+        Me.rtfMessages = New System.Windows.Forms.RichTextBox()
         Me.SuspendLayout()
         '
-        'txtMessages
+        'rtfMessages
         '
-        Me.txtMessages.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.txtMessages.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.txtMessages.Location = New System.Drawing.Point(0, 0)
-        Me.txtMessages.Multiline = True
-        Me.txtMessages.Name = "txtMessages"
-        Me.txtMessages.ReadOnly = True
-        Me.txtMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtMessages.Size = New System.Drawing.Size(420, 338)
-        Me.txtMessages.TabIndex = 0
+        Me.rtfMessages.BackColor = System.Drawing.SystemColors.Window
+        Me.rtfMessages.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.rtfMessages.DetectUrls = False
+        Me.rtfMessages.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.rtfMessages.Location = New System.Drawing.Point(0, 0)
+        Me.rtfMessages.Name = "rtfMessages"
+        Me.rtfMessages.ReadOnly = True
+        Me.rtfMessages.Size = New System.Drawing.Size(420, 338)
+        Me.rtfMessages.TabIndex = 0
+        Me.rtfMessages.Text = ""
         '
         'MessageList
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Controls.Add(Me.txtMessages)
+        Me.Controls.Add(Me.rtfMessages)
         Me.Name = "MessageList"
         Me.Size = New System.Drawing.Size(420, 338)
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
 
-    Friend WithEvents txtMessages As TextBox
+    Friend WithEvents rtfMessages As RichTextBox
 End Class
