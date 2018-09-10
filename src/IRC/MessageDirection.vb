@@ -1,4 +1,5 @@
 ﻿Public Enum MessageDirection
+    NotSet
     Incoming
     Outgoing
     Client

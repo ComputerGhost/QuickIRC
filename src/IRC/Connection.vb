@@ -54,8 +54,8 @@ Public Class Connection
 
     ' Inject a raw message, process as if it was sent, but don't send.
     Sub InjectSentLine(raw As String)
-        Dim fake = Message.Parse(raw, MessageDirection.Outgoing)
-        fake.Source = New MessageSource With {.Name = Nickname}
+        Dim fake = Message.Parse(raw)
+        fake.Source = New MessageSource(Nickname)
         InjectSentMessage(fake)
     End Sub
 
@@ -85,8 +85,8 @@ Public Class Connection
     ' Send a raw message to the IRC server and notify listeners of this.
     ' This will throw a SyntaxException if it is invalid.
     Sub SendLine(raw As String, Optional do_notify As Boolean = True)
-        Dim outgoing = Message.Parse(raw, MessageDirection.Outgoing)
-        outgoing.Source = New MessageSource With {.Name = Nickname}
+        Dim outgoing = Message.Parse(raw)
+        outgoing.Source = New MessageSource(Nickname)
         SendMessage(outgoing, do_notify)
     End Sub
 
@@ -162,6 +162,9 @@ Public Class Connection
 
     Private Sub InternalInject(message As Message)
 
+        message.Direction = MessageDirection.Outgoing
+        message.Source = New MessageSource(Nickname)
+
         Using lock As New ThreadLock(Chats, SentNotificationQueue)
             If QueueSentNotifications Then
                 SentNotificationQueue.Enqueue(message)
@@ -175,6 +178,9 @@ Public Class Connection
     End Sub
 
     Private Sub InternalSend(message As Message, do_notify As Boolean)
+
+        message.Direction = MessageDirection.Outgoing
+        message.Source = New MessageSource(Nickname)
 
         SyncLock ConnectionLock
             InternalConnection?.SendLine(message.Raw)
@@ -294,11 +300,14 @@ Public Class Connection
                 Exit Sub
             End If
 
+            Dim msg = Message.Parse(line)
+            msg.Direction = MessageDirection.Incoming
+
             Using locks As New ThreadLock(Chats, SentNotificationQueue)
                 Try
                     StartSentQueue()
                     For Each chat In Chats
-                        chat.HandleMessageReceived(Message.Parse(line, MessageDirection.Incoming))
+                        chat.HandleMessageReceived(msg)
                     Next
                 Catch ex As Exception When _
                     TypeOf ex Is FloodException OrElse

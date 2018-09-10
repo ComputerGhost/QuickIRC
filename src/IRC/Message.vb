@@ -17,7 +17,7 @@ Public Class Message
     Private _Raw As String
 
 
-    Shared Function Parse(line As String, direction As MessageDirection) As Message
+    Shared Function Parse(line As String) As Message
 
         ' [tags] [source] <command> [parameters]
         Dim groups = Regex.Match(line, "^(?:@([^ ]+) )?(?::([^ ]+) )?([^ ]+) ?(.*?)$").Groups
@@ -27,7 +27,6 @@ Public Class Message
 
         Dim ret = New Message With {
             ._Raw = line,
-            .Direction = direction,
             .Source = MessageSource.Parse(groups(2).Value),
             .Verb = groups(3).Value.ToUpper()}
 
