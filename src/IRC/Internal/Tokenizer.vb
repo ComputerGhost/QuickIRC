@@ -8,6 +8,11 @@ Public Class Tokenizer
     ReadOnly Property Offset As Integer = 0
 
 
+    ' Note: when using this constructor, some functionality may break
+    Sub New(text As String)
+        Me.Text = text
+    End Sub
+
     Sub New(server_limits As ServerLimits, text As String)
         Me.ServerLimits = server_limits
         Me.Text = text
