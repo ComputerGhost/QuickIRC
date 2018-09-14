@@ -16,6 +16,7 @@
             txtMessage.Enabled = False
         End If
 
+        lstMessages.DisplayFriendlyMessages = chat.DisplayFriendlyMessages
         lstMessages.BindToChat(BoundChat)
 
     End Sub

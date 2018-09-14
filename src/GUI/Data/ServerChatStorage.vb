@@ -1,8 +1,11 @@
 ﻿Public Class ServerChatStorage
     Inherits ChatStorageBase
 
-    Sub New(chat As IRC.ChatBase)
+    Property DisplayFriendlyMessages As Boolean = True
+
+    Sub New(chat As IRC.ChatBase, Optional display_friendly As Boolean = True)
         MyBase.New(chat)
+        DisplayFriendlyMessages = display_friendly
     End Sub
 
 End Class

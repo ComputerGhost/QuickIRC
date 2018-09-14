@@ -26,7 +26,7 @@
         Connection.RegisterChat(raw_chat)
         lstChannels.Items.Add(New ListViewItem({"raw"}) With {
             .Group = lstChannels.Groups("Server"),
-            .Tag = New ServerChatStorage(raw_chat)})
+            .Tag = New ServerChatStorage(raw_chat, False)})
 
         Connection.Connect()
 

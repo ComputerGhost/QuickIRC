@@ -4,6 +4,8 @@ Imports Algorithms
 
 Public Class MessageList
 
+    Property DisplayFriendlyMessages As Boolean = True
+
     Property DateFormat As String = "D"
     Property TimeFormat As String = "HH:mm:ss"
 
@@ -124,7 +126,20 @@ Public Class MessageList
         builder.Append(message.TimeStamp.ToString(TimeFormat))
         builder.Append(" "c)
 
-        ' message formatted per verb
+        ' message
+        If DisplayFriendlyMessages Then
+            AppendFriendlyMessage(builder, message)
+        Else
+            AppendRawMessage(builder, message)
+        End If
+
+        ' End paragraph and add in the RTF
+        builder.EndParagraph()
+        rtfMessages.AppendRtf(builder.ToString())
+
+    End Sub
+
+    Private Sub AppendFriendlyMessage(builder As RtfBuilder, message As IRC.Message)
         Select Case message.Verb
 
             Case "JOIN"
@@ -197,27 +212,26 @@ Public Class MessageList
                     Next
 
                 Else ' other command
-
-                    If message.Source.Name IsNot Nothing Then
-                        builder.SetColor(GetSourceColor(message))
-                        builder.AppendFormat("{0} ", message.Source.Name)
-                    End If
-
-                    builder.SetColor(VerbColor)
-                    builder.AppendFormat("{0} ", message.Verb)
-
-                    builder.SetColor(MessageColor)
-                    For i = 0 To message.Parameters.Count - 1
-                        builder.AppendFormat(" {0}", message.Parameters(i))
-                    Next
-
+                    AppendRawMessage(builder, message)
                 End If
 
         End Select
+    End Sub
 
-        ' End paragraph and add in the RTF
-        builder.EndParagraph()
-        rtfMessages.AppendRtf(builder.ToString())
+    Private Sub AppendRawMessage(builder As RtfBuilder, message As IRC.Message)
+
+        If message.Source.Name IsNot Nothing Then
+            builder.SetColor(GetSourceColor(message))
+            builder.AppendFormat("{0} ", message.Source.Name)
+        End If
+
+        builder.SetColor(VerbColor)
+        builder.AppendFormat("{0}", message.Verb)
+
+        builder.SetColor(MessageColor)
+        For i = 0 To message.Parameters.Count - 1
+            builder.AppendFormat(" {0}", message.Parameters(i))
+        Next
 
     End Sub
 
@@ -239,8 +253,14 @@ Public Class MessageList
     End Function
 
     Private Function ShouldProcess(message As IRC.Message)
+
+        If Not DisplayFriendlyMessages Then
+            Return True
+        End If
+
         Dim ignored = {"PING", "PONG"}
         Return Not ignored.Contains(message.Verb)
+
     End Function
 
 #End Region
