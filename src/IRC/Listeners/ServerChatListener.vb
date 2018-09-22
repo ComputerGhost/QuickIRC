@@ -1,11 +1,23 @@
-﻿Public Class ServerChat
-    Inherits ChatBase
+﻿'
+' Listens for chats that are at the server level
+'
+Public Class ServerChatListener
+    Inherits ListenerBase
 
-    Public Overrides Sub ProcessAndSend(text As String)
-        If text.StartsWith("/"c) Then
-            MyBase.ProcessAndSend(text)
-        Else
-            MyBase.ProcessAndSend("/"c & text)
+
+    Delegate Sub MessageDelegate(message As Message)
+    Property OnMessage As MessageDelegate
+
+
+    Overrides Sub HandleMessageReceived(ByRef message As Message)
+        If ShouldProcess(message) Then
+            OnMessage?.Invoke(message)
+        End If
+    End Sub
+
+    Overrides Sub HandleMessageSent(ByRef message As Message)
+        If ShouldProcess(message) Then
+            OnMessage?.Invoke(message)
         End If
     End Sub
 
@@ -25,10 +37,15 @@
 
     Private Function ShouldProcess(message As Message) As Boolean
 
+        If Not message.IsValid Then
+            Return False
+        End If
+
         If IgnoredCommands.Contains(message.Verb) Then
             Return False
         End If
 
+        ' Non-channel MODE commands
         If message.Verb = "MODE" Then
             Dim target = message.Parameters(0)
             Dim chan_prefixes = Connection.ServerLimits.ChanTypes
@@ -38,18 +55,6 @@
         Return True
 
     End Function
-
-    Protected Friend Overrides Sub HandleMessageReceived(message As Message)
-        If ShouldProcess(message) Then
-            MyBase.HandleMessageReceived(message)
-        End If
-    End Sub
-
-    Protected Friend Overrides Sub HandleMessageSent(message As Message)
-        If ShouldProcess(message) Then
-            MyBase.HandleMessageSent(message)
-        End If
-    End Sub
 
 #End Region
 

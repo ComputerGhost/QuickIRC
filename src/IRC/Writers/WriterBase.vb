@@ -1,64 +1,69 @@
-﻿Public Class ChatBase
+﻿Public Class WriterBase
 
-    Delegate Sub ConnectionOpenedDelegate()
-    Delegate Sub ConnectionFailedDelegate(ex As Exception)
-    Delegate Sub ConnectionClosedDelegate()
-    Property OnConnectionOpened As ConnectionOpenedDelegate
-    Property OnConnectionFailed As ConnectionFailedDelegate
-    Property OnConnectionClosed As ConnectionClosedDelegate
+    Protected ReadOnly Property Connection As Connection
 
-    Delegate Sub MessageReceivedDelegate(message As Message)
-    Delegate Sub MessageSentDelegate(message As Message)
-    Property OnMessageReceived As MessageReceivedDelegate
-    Property OnMessageSent As MessageSentDelegate
+    Sub New(connection As Connection)
+        Me._Connection = connection
+    End Sub
 
-    Delegate Sub ExceptionHappenedDelegate(ex As Exception)
-    Property OnExceptionHappened As ExceptionHappenedDelegate
-
-
+    ' If parameter starts with "/", it is a command. Otherwise it's text.
+    ' Override this in child classes with context-specific stuff.
     Overridable Sub ProcessAndSend(text As String)
 
-        Dim tokenizer As New Tokenizer(Connection.ServerLimits, text)
-
+        Dim tokenizer As New Tokenizer(text)
         If Not tokenizer.Skip("/"c) Then
             Throw New ExpectationFailed("Command expected.")
         End If
-        Dim command = tokenizer.ReadCommand()
 
-        ' Whitelisted commands are sent on to the server.
+        Dim command = tokenizer.ReadWord.ToUpper()
         If ForwardedCommands.ContainsKey(command) Then
-
-            Dim params As New List(Of String)
-
-            Dim middles = ForwardedCommands(command)
-            For i = 1 To middles.Max
-                Dim param = tokenizer.ReadWord()
-                If param Is Nothing Then
-                    If i > middles.Min Then Exit For
-                    Throw New SyntaxError("Command expects more parameters.")
-                End If
-                params.Add(param)
-            Next
-
-            Dim trailing = tokenizer.ReadRemaining()
-            If trailing IsNot Nothing Then
-                params.Add(trailing)
-            End If
-
-            Connection.SendMessage(New Message With {
-                .Verb = command,
-                .Parameters = params})
-
-            Exit Sub
+            ProcessForwarded(command, tokenizer)
+        Else
+            ProcessSpecial(command, tokenizer)
         End If
 
-        ' These commands require special handling
+    End Sub
+
+#Region "Internals"
+
+    ' Whitelisted commands require minimal processing
+    Private Sub ProcessForwarded(command As String, tokenizer As Tokenizer)
+        Debug.Assert(ForwardedCommands.ContainsKey(command))
+
+        Dim message As New Message With {.Verb = command}
+
+        ' Middle params, which are single words
+        Dim middles = ForwardedCommands(command)
+        For i = 1 To middles.Max
+            Dim param = tokenizer.ReadWord()
+            If param IsNot Nothing Then
+                message.Parameters.Add(param)
+            ElseIf i > middles.Min Then
+                Exit For
+            Else
+                Throw New SyntaxError(String.Format(
+                    "{0} requires more parameters.", command))
+            End If
+        Next
+
+        ' Remaining is text param, which can have multiple words.
+        Dim trailing = tokenizer.ReadRemaining()
+        If trailing IsNot Nothing Then
+            message.Parameters.Add(trailing)
+        End If
+
+        Connection.SendMessage(message)
+
+    End Sub
+
+    ' These commands require special processing
+    Private Sub ProcessSpecial(command As String, tokenizer As Tokenizer)
         Select Case command
 
             Case "CTCP" ' CTCP <target> <command> [parameters]
 
-                Dim target = tokenizer.ReadTarget()
-                Dim ctcp = tokenizer.ReadCommand()
+                Dim target = tokenizer.ReadWord()
+                Dim ctcp = tokenizer.ReadWord().ToUpper()
                 If (target Is Nothing) OrElse (ctcp Is Nothing) Then
                     Throw New SyntaxError("CTCP expects at least two parameters.")
                 End If
@@ -79,7 +84,7 @@
 
             Case "MSG" ' MSG <target> <message>
 
-                Dim target = tokenizer.ReadTarget()
+                Dim target = tokenizer.ReadWord()
                 Dim message = tokenizer.ReadRemaining()
                 If (target Is Nothing) OrElse (message Is Nothing) Then
                     Throw New SyntaxError("MSG expects two parameters.")
@@ -87,84 +92,16 @@
 
                 Connection.SendLine(String.Format("PRIVMSG {0} :{1}", target, message))
 
-
-            Case "OPER" ' OPER <username> <password>
-
-                Dim username = tokenizer.ReadWord()
-                Dim password = tokenizer.ReadWord()
-                If (username Is Nothing) OrElse (password Is Nothing) OrElse (Not tokenizer.IsEnd()) Then
-                    Throw New SyntaxError("OPER expects two parameters.")
-                End If
-
-                ' Send the correct, log the redacted
-                Connection.SendLine(String.Format("OPER {0} {1}", username, password), False)
-                Connection.InjectSentLine(String.Format("OPER {0} [redacted]", username))
-
-            Case "PASS" ' PASS <password>
-
-                Dim password = tokenizer.ReadWord()
-                If (password Is Nothing) OrElse (Not tokenizer.IsEnd()) Then
-                    Throw New SyntaxError("PASS expects one parameter.")
-                End If
-
-                ' Send the correct, log the redacted
-                Connection.SendLine("PASS " & password, False)
-                Connection.InjectSentLine("PASS [redacted]")
-
             Case "RAW" ' RAW <message>
 
                 Connection.SendLine(tokenizer.ReadRemaining())
 
             Case Else
 
-                Throw New NotImplementedException(command)
+                Throw New NotImplementedException(String.Format(
+                    "{0} is not a recognized command.", command))
 
         End Select
-
-    End Sub
-
-
-    '
-    ' These can be overridden to receive the events.
-    '
-
-    Protected Friend Overridable Sub HandleConnectionOpened()
-        OnConnectionOpened?.Invoke()
-    End Sub
-
-    Protected Friend Overridable Sub HandleConnectionFailed(ex As Exception)
-        OnConnectionFailed?.Invoke(ex)
-    End Sub
-
-    Protected Friend Overridable Sub HandleConnectionClosed()
-        OnConnectionClosed?.Invoke()
-    End Sub
-
-    Protected Friend Overridable Sub HandleExceptionHappened(ex As Exception)
-        OnExceptionHappened?.Invoke(ex)
-    End Sub
-
-    Protected Friend Overridable Sub HandleMessageReceived(message As Message)
-        OnMessageReceived?.Invoke(message)
-    End Sub
-
-    Protected Friend Overridable Sub HandleMessageSent(message As Message)
-        OnMessageSent?.Invoke(message)
-    End Sub
-
-
-#Region "Internals"
-
-    ' This should only be set from the Connection class. It will have a value
-    ' after registering with a connection.
-    Protected ReadOnly Property Connection As Connection = Nothing
-
-    ' This should only be called from the Connection class
-    Friend Sub Register(Connection As Connection)
-        If Me.Connection IsNot Nothing Then
-            Throw New ExpectationFailed("Chat cannot be re-registered with another Connection.")
-        End If
-        Me._Connection = Connection
     End Sub
 
 #End Region
@@ -206,7 +143,9 @@
         {"NAMES", New MiddleInfo With {.Count = 1}},            ' NAMES <channels>
         {"NICK", New MiddleInfo With {.Min = 1, .Max = 1}},     ' NICK <nickname> [hopcount]
         {"NOTICE", New MiddleInfo With {.Count = 1}},           ' NOTICE <target> <text>
+        {"OPER", New MiddleInfo With {.Count = 2}},             ' OPER <username> <password>
         {"PART", New MiddleInfo With {.Count = 1}},             ' PART <channels> [reason]
+        {"PASS", New MiddleInfo With {.Count = 1}},             ' PASS <password>
         {"PONG", New MiddleInfo With {.Min = 1, .Max = 2}},     ' PONG <daemon> [daemon]
         {"PRIVMSG", New MiddleInfo With {.Count = 1}},          ' PRIVMSG <targets> <text>
         {"REHASH", New MiddleInfo With {.Count = 0}},           ' REHASH

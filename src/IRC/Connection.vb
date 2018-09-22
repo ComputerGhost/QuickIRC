@@ -92,18 +92,18 @@ Public Class Connection
 
 
     '
-    ' Chat handler methods
+    ' Listener handler methods
     '
 
-    ' Register a chatroom for this connection.
-    Sub RegisterChat(chat As ChatBase)
-        Task.Run(Sub() InternalRegister(chat))
+    ' Register a listener for this connection.
+    Sub RegisterListener(listener As ListenerBase)
+        Task.Run(Sub() InternalRegister(listener))
     End Sub
 
-    ' Unregister a chatroom for this connection. Please ensure that the chat 
-    ' does not interface with Connection after this call.
-    Sub UnregisterChat(chat As ChatBase)
-        Task.Run(Sub() InternalUnregister(chat))
+    ' Unregister a listener for this connection. Please ensure that the 
+    ' listener does not interface with Connection after this call.
+    Sub UnregisterListener(listener As ListenerBase)
+        Task.Run(Sub() InternalUnregister(listener))
     End Sub
 
 
@@ -112,19 +112,19 @@ Public Class Connection
     Private InternalConnection As InternalConnection
     Private ConnectionLock As New Object
 
-    Private Chats As New Algorithms.List(Of ChatBase)
+    Private Listeners As New Algorithms.List(Of ListenerBase)
 
 
-    Private Sub InternalRegister(chat As ChatBase)
-        Using lock As New ThreadLock(Chats)
-            chat.Register(Me)
-            Chats.Add(chat)
+    Private Sub InternalRegister(listener As ListenerBase)
+        Using lock As New ThreadLock(Listeners)
+            listener.HandleRegistration(Me)
+            Listeners.Add(listener)
         End Using
     End Sub
 
-    Private Sub InternalUnregister(chat As ChatBase)
-        Using lock As New ThreadLock(Chats)
-            Chats.Remove(chat)
+    Private Sub InternalUnregister(listener As ListenerBase)
+        Using lock As New ThreadLock(Listeners)
+            Listeners.Remove(listener)
         End Using
     End Sub
 
@@ -165,12 +165,12 @@ Public Class Connection
         message.Direction = MessageDirection.Outgoing
         message.Source = New MessageSource(Nickname)
 
-        Using lock As New ThreadLock(Chats, SentNotificationQueue)
+        Using lock As New ThreadLock(Listeners, SentNotificationQueue)
             If QueueSentNotifications Then
                 SentNotificationQueue.Enqueue(message)
             Else
-                For Each chat In Chats
-                    chat.HandleMessageSent(message)
+                For Each listener In Listeners
+                    listener.HandleMessageSent(message)
                 Next
             End If
         End Using
@@ -186,13 +186,13 @@ Public Class Connection
             InternalConnection?.SendLine(message.Raw)
         End SyncLock
 
-        Using lock As New ThreadLock(Chats, SentNotificationQueue)
+        Using lock As New ThreadLock(Listeners, SentNotificationQueue)
             If do_notify Then
                 If QueueSentNotifications Then
                     SentNotificationQueue.Enqueue(message)
                 Else
-                    For Each chat In Chats
-                        chat.HandleMessageSent(message)
+                    For Each listener In Listeners
+                        listener.HandleMessageSent(message)
                     Next
                 End If
             End If
@@ -219,8 +219,8 @@ Public Class Connection
     Sub StopSentQueue()
         While SentNotificationQueue.Count
             Dim message = SentNotificationQueue.Dequeue()
-            For Each chat In Chats
-                chat.HandleMessageSent(message)
+            For Each listener In Listeners
+                listener.HandleMessageSent(message)
             Next
         End While
         QueueSentNotifications = False
@@ -239,11 +239,11 @@ Public Class Connection
                 Exit Sub
             End If
 
-            Using lock As New ThreadLock(Chats, SentNotificationQueue)
+            Using lock As New ThreadLock(Listeners, SentNotificationQueue)
                 Try
                     StartSentQueue()
-                    For Each chat In Chats
-                        chat.HandleConnectionOpened()
+                    For Each listener In Listeners
+                        listener.HandleConnected()
                     Next
                 Finally
                     StopSentQueue()
@@ -261,12 +261,13 @@ Public Class Connection
                 Exit Sub
             End If
 
-            Using lock As New ThreadLock(Chats, SentNotificationQueue)
+            Using lock As New ThreadLock(Listeners, SentNotificationQueue)
                 Try
                     StartSentQueue()
-                    For Each chat In Chats
-                        chat.HandleConnectionFailed(ex)
+                    For Each listener In Listeners
+                        listener.HandleDisconnected()
                     Next
+                    InjectSentLine(String.Format("CLIENTERROR {0}", ex.Message))
                 Finally
                     StopSentQueue()
                 End Try
@@ -283,9 +284,9 @@ Public Class Connection
                 Exit Sub
             End If
 
-            Using lock As New ThreadLock(Chats)
-                For Each chat In Chats
-                    chat.HandleConnectionClosed()
+            Using lock As New ThreadLock(Listeners)
+                For Each listener In Listeners
+                    listener.HandleDisconnected()
                 Next
             End Using
 
@@ -303,19 +304,17 @@ Public Class Connection
             Dim msg = Message.Parse(line)
             msg.Direction = MessageDirection.Incoming
 
-            Using locks As New ThreadLock(Chats, SentNotificationQueue)
+            Using locks As New ThreadLock(Listeners, SentNotificationQueue)
                 Try
                     StartSentQueue()
-                    For Each chat In Chats
-                        chat.HandleMessageReceived(msg)
+                    For Each listener In Listeners
+                        listener.HandleMessageReceived(msg)
                     Next
                 Catch ex As Exception When _
                     TypeOf ex Is FloodException OrElse
                     TypeOf ex Is LimitException OrElse
                     TypeOf ex Is NotImplementedException
-                    For Each chat In Chats
-                        chat.HandleExceptionHappened(ex)
-                    Next
+                    InjectSentLine(String.Format("CLIENTERROR {0}", ex.Message))
                 Finally
                     StopSentQueue()
                 End Try

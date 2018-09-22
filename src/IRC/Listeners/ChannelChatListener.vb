@@ -2,14 +2,14 @@
 Imports Algorithms
 
 '
-' Handles commands within the context of a channel.
+' Processes events for channels.
 '
-' NOTE: It is assumed that incoming commands have the correct syntax. Use a 
-' StandardHandler to ensure that this prerequisite is met.
-'
-Public Class ChannelChat
-    Inherits ChatBase
+Public Class ChannelChatListener
+    Inherits ListenerBase
 
+
+    Delegate Sub MessageDelegate(message As Message)
+    Property OnMessage As MessageDelegate
 
     Delegate Sub UsersUpdatedDelegate(nicknames As SortedDictionary(Of String, String))
     Delegate Sub UserJoinedDelegate(nickname As String)
@@ -22,7 +22,7 @@ Public Class ChannelChat
     Property OnUserModeChanged As UserModeChangedDelegate
     Property OnUserParted As UserPartedDelegate
 
-    Delegate Sub TopicChangedDelegate(Text As String)
+    Delegate Sub TopicChangedDelegate(text As String)
     Property OnTopicChanged As TopicChangedDelegate
 
 
@@ -33,163 +33,19 @@ Public Class ChannelChat
 
 
     Sub New(channel_name As String)
-        MyBase.New()
         ChannelName = channel_name
     End Sub
 
 
-    Public Overrides Sub ProcessAndSend(text As String)
-
-        Dim tokenizer As New Tokenizer(Connection.ServerLimits, text)
-
-        ' If it's not a command, then it's a message
-        If Not tokenizer.Skip("/c") Then
-            Connection.SendLine(String.Format("PRIVMSG {0} :{1}", ChannelName, text))
-            Exit Sub
-        End If
-
-        Dim command = tokenizer.ReadCommand()
-        Select Case command
-
-            Case "INVITE" ' INVITE <username> [channel]
-
-                Dim username = tokenizer.ReadWord()
-
-                If tokenizer.IsChannel() Then
-                    MyBase.ProcessAndSend(text)
-                    Exit Sub
-                End If
-
-                If (username Is Nothing) OrElse (Not tokenizer.IsEnd()) Then
-                    Throw New SyntaxError("INVITE expects one or two parameters.")
-                End If
-
-                Connection.SendLine(String.Format("INVITE {0} {1}", username, ChannelName))
-
-            Case "KICK" ' KICK [channel] <user> [comment]
-
-                If tokenizer.IsChannel() Then
-                    MyBase.ProcessAndSend(text)
-                    Exit Sub
-                End If
-
-                Dim username = tokenizer.ReadWord()
-                Dim comment = tokenizer.ReadRemaining()
-
-                If username Is Nothing Then
-                    Throw New SyntaxError("KICK expects one to three parameters.")
-                End If
-
-                If comment Is Nothing Then
-                    Connection.SendLine(String.Format("KICK {0} {1}", ChannelName, username))
-                Else
-                    Connection.SendLine(String.Format("KICK {0} {1} :{2}", ChannelName, username, comment))
-                End If
-
-            Case "ME" ' ME [action]
-
-                Dim action_text = tokenizer.ReadRemaining()
-
-                If action_text Is Nothing Then
-                    Throw New SyntaxError("ME expects a parameter.")
-                End If
-
-                Connection.SendCTCPResponse(ChannelName, "ACTION", action_text)
-
-            Case "PART" ' PART [channel] [message]
-
-                If tokenizer.IsChannel() Then
-                    MyBase.ProcessAndSend(text)
-                    Exit Sub
-                End If
-
-                Dim message = tokenizer.ReadRemaining()
-                If message Is Nothing Then
-                    Connection.SendLine("PART " & ChannelName)
-                Else
-                    Connection.SendLine(String.Format("PART {0} :{1}", ChannelName, message))
-                End If
-
-            Case "SAY" ' SAY <message>
-
-                Dim message = If(tokenizer.ReadRemaining(), "")
-                Connection.SendLine(String.Format("PRIVMSG {0} :{1}", ChannelName, message))
-
-            Case "TOPIC" ' TOPIC [channel] [message]
-
-                If tokenizer.IsChannel() Then
-                    MyBase.ProcessAndSend(text)
-                    Exit Sub
-                End If
-
-                Dim message = tokenizer.ReadRemaining()
-                If message Is Nothing Then
-                    Connection.SendLine("TOPIC " & ChannelName)
-                Else
-                    Connection.SendLine(String.Format("TOPIC {0} :{1}", ChannelName, message))
-                End If
-
-            Case Else
-
-                MyBase.ProcessAndSend(text)
-
-        End Select
-
-    End Sub
-
-#Region "Internals"
-
-    Private Function ShouldProcess(message As Message) As Boolean
-
-        ' Commands that have channel as a target in #1 parameter
-        Static TargetCommands1 As New HashSet(Of String) From {
-            "JOIN", "MODE", "NOTICE", "PART", "PRIVMSG", "TOPIC"}
-
-        ' Commands that have a channel as target in #2 parameter
-        Static TargetCommands2 As New HashSet(Of String) From {
-            "328", "332", "333", "366"}
-
-        ' Commands from a sender in the channel
-        Static SenderCommands As New HashSet(Of String) From {
-            "AWAY", "NICK", "QUIT"}
-
-        ' Other commands we're interested in
-        Static OtherCommands As New HashSet(Of String) From {
-            "353"}
-
-        Dim command = message.Verb
-
-        If message.Source.Name Is Nothing Then ' sent message
-            Return True
-        ElseIf TargetCommands1.Contains(command) Then
-            Return (ChannelName = message.Parameters(0))
-        ElseIf TargetCommands2.Contains(command) Then
-            Return (ChannelName = message.Parameters(1))
-        ElseIf SenderCommands.Contains(command) Then
-            Using lock As New ThreadLock(Users)
-                Return Users.ContainsKey(message.Source.Name)
-            End Using
-        Else
-            Return OtherCommands.Contains(command)
-        End If
-
-    End Function
-
-    Protected Friend Overrides Sub HandleMessageReceived(message As Message)
-
+    Overrides Sub HandleMessageReceived(ByRef message As Message)
         If Not ShouldProcess(message) Then
             Exit Sub
         End If
 
         Dim sender = message.Source.Name
-
         Select Case message.Verb
 
             Case "332" ' <sender> 332 <my_nick> <channel> <topic>
-
-                If ChannelName <> message.Parameters(1) Then
-                    Exit Sub
-                End If
 
                 Topic = message.Parameters(2)
                 OnTopicChanged?.Invoke(Topic)
@@ -200,7 +56,7 @@ Public Class ChannelChat
                     Exit Sub
                 End If
 
-                Dim tokenizer As New Tokenizer(Connection.ServerLimits, message.Parameters.Last())
+                Dim tokenizer As New Tokenizer(message.Parameters.Last())
                 Using lock As New ThreadLock(Users)
                     While Not tokenizer.IsEnd
                         Dim user = tokenizer.ReadWord()
@@ -318,16 +174,46 @@ Public Class ChannelChat
                 OnTopicChanged?.Invoke(Topic)
 
         End Select
-
-        MyBase.HandleMessageReceived(message)
-
     End Sub
 
-    Protected Friend Overrides Sub HandleMessageSent(message As Message)
+    Overrides Sub HandleMessageSent(ByRef message As Message)
         If ShouldProcess(message) Then
-            MyBase.HandleMessageSent(message)
+            OnMessage?.Invoke(message)
         End If
     End Sub
+
+
+#Region "Internals"
+
+    Private Function ShouldProcess(message As Message) As Boolean
+
+        If Not message.IsValid Then
+            Return False
+        End If
+
+        Dim command = message.Verb
+
+        ' First parameter is the channel
+        If {"JOIN", "MODE", "NOTICE", "PART", "PRIVMSG", "TOPIC"}.Contains(command) Then
+            Return ChannelName = message.Parameters(0)
+        End If
+
+        ' Second parameter is the channel
+        If {"328", "332", "333", "366"}.Contains(command) Then
+            Return ChannelName = message.Parameters(1)
+        End If
+
+        ' Commands from a sender in the channel
+        If {"AWAY", "NICK", "QUIT"}.Contains(command) Then
+            Using lock As New ThreadLock(Users)
+                Return Users.ContainsKey(message.Source.Name)
+            End Using
+        End If
+
+        ' More complicated. Pass these and look at them later.
+        Return {"353"}.Contains(command)
+
+    End Function
 
 #End Region
 

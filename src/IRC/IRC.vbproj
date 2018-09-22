@@ -63,12 +63,6 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chats\ChannelChat.vb" />
-    <Compile Include="Chats\ChatBase.vb" />
-    <Compile Include="Chats\ConnectChat.vb" />
-    <Compile Include="Chats\ServerChat.vb" />
-    <Compile Include="Chats\StandardHandler.vb" />
-    <Compile Include="Chats\UserChat.vb" />
     <Compile Include="ClientLimits.vb" />
     <Compile Include="Connection.vb" />
     <Compile Include="Exceptions\ExpectationFailed.vb" />
@@ -77,6 +71,16 @@
     <Compile Include="Exceptions\SyntaxError.vb" />
     <Compile Include="Internal\InternalConnection.vb" />
     <Compile Include="Internal\Tokenizer.vb" />
+    <Compile Include="Listeners\ChannelChatListener.vb" />
+    <Compile Include="Listeners\ConnectListener.vb" />
+    <Compile Include="Listeners\FloodListener.vb" />
+    <Compile Include="Listeners\RawChatListener.vb" />
+    <Compile Include="Listeners\RedactListener.vb" />
+    <Compile Include="Listeners\ListenerBase.vb" />
+    <Compile Include="Listeners\ServerChatListener.vb" />
+    <Compile Include="Listeners\StandardListener.vb" />
+    <Compile Include="Listeners\SyntaxListener.vb" />
+    <Compile Include="Listeners\UserChatLIstener.vb" />
     <Compile Include="Message.vb" />
     <Compile Include="MessageDirection.vb" />
     <Compile Include="MessageSource.vb" />
@@ -96,6 +100,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ServerLimits.vb" />
+    <Compile Include="Writers\ChannelChatWriter.vb" />
+    <Compile Include="Writers\ServerChatWriter.vb" />
+    <Compile Include="Writers\UserChatWriter.vb" />
+    <Compile Include="Writers\WriterBase.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -122,5 +130,6 @@
       <Name>Algorithms</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
