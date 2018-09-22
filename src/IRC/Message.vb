@@ -5,6 +5,7 @@ Public Class Message
 
     Property TimeStamp As Date = Now
     Property Direction As MessageDirection
+    Property IsValid As Boolean = True
     Property Source As MessageSource
     Property Verb As String
     Property Parameters As New List(Of String)
