@@ -1,14 +1,14 @@
 ﻿'
 ' Listens for chats to private messages
 '
-Public Class UserChatLIstener
+Public Class UserChatListener
     Inherits ListenerBase
 
 
     Delegate Sub MessageDelegate(message As Message)
     Property OnMessage As MessageDelegate
 
-    Delegate Sub UserChangedDelegate(old_nick As String, new_nick As String)
+    Delegate Sub UserChangedDelegate(new_nick As String)
     Delegate Sub UserQuitDelegate()
     Property OnUserChanged As UserChangedDelegate
     Property OnUserQuit As UserQuitDelegate
@@ -29,7 +29,7 @@ Public Class UserChatLIstener
         Select Case message.Verb
             Case "NICK" ' <sender> NICK <new_nick>
                 UserName = message.Parameters(0)
-                OnUserChanged?.Invoke(message.Source.Name, UserName)
+                OnUserChanged?.Invoke(UserName)
             Case "QUIT" ' <sender> QUIT [reason]
                 OnUserQuit?.Invoke()
         End Select
