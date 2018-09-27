@@ -26,6 +26,9 @@ Public Class Connection
     Sub New(server As String, port As Integer)
         Me.Server = server
         Me.Port = port
+        InternalRegister(New SyntaxListener())
+        InternalRegister(New RedactListener())
+        InternalRegister(New FloodListener())
         ServerLimits = ServerLimits.GetDefault()
     End Sub
 

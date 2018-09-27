@@ -92,18 +92,25 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chats\ChannelChat.vb" />
+    <Compile Include="Chats\ChatBase.vb" />
+    <Compile Include="Chats\RawChat.vb" />
+    <Compile Include="Chats\RawChatView.designer.vb">
+      <DependentUpon>RawChatView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Chats\RawChatView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Chats\ServerChat.vb" />
+    <Compile Include="Chats\UserChat.vb" />
     <Compile Include="Controls\ErrorProvider.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\RichTextBoxExtensions.vb" />
-    <Compile Include="Data\ChannelChatStorage.vb" />
-    <Compile Include="Data\ChatStorageBase.vb" />
-    <Compile Include="Data\ServerChatStorage.vb" />
-    <Compile Include="Data\UserChatStorage.vb" />
-    <Compile Include="FormAreas\ChannelChat.Designer.vb">
-      <DependentUpon>ChannelChat.vb</DependentUpon>
+    <Compile Include="Chats\ChannelChatView.Designer.vb">
+      <DependentUpon>ChannelChatView.vb</DependentUpon>
     </Compile>
-    <Compile Include="FormAreas\ChannelChat.vb">
+    <Compile Include="Chats\ChannelChatView.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FormAreas\NewConnection.Designer.vb">
@@ -112,16 +119,16 @@
     <Compile Include="FormAreas\NewConnection.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FormAreas\ServerChat.Designer.vb">
-      <DependentUpon>ServerChat.vb</DependentUpon>
+    <Compile Include="Chats\ServerChatView.Designer.vb">
+      <DependentUpon>ServerChatView.vb</DependentUpon>
     </Compile>
-    <Compile Include="FormAreas\ServerChat.vb">
+    <Compile Include="Chats\ServerChatView.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FormAreas\UserChat.Designer.vb">
-      <DependentUpon>UserChat.vb</DependentUpon>
+    <Compile Include="Chats\UserChatView.Designer.vb">
+      <DependentUpon>UserChatView.vb</DependentUpon>
     </Compile>
-    <Compile Include="FormAreas\UserChat.vb">
+    <Compile Include="Chats\UserChatView.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Forms\AboutQuickIRC.Designer.vb">
@@ -175,17 +182,20 @@
     <Compile Include="Data\ConnectionInfo.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FormAreas\ChannelChat.resx">
-      <DependentUpon>ChannelChat.vb</DependentUpon>
+    <EmbeddedResource Include="Chats\ChannelChatView.resx">
+      <DependentUpon>ChannelChatView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Chats\RawChatView.resx">
+      <DependentUpon>RawChatView.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormAreas\NewConnection.resx">
       <DependentUpon>NewConnection.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormAreas\ServerChat.resx">
-      <DependentUpon>ServerChat.vb</DependentUpon>
+    <EmbeddedResource Include="Chats\ServerChatView.resx">
+      <DependentUpon>ServerChatView.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormAreas\UserChat.resx">
-      <DependentUpon>UserChat.vb</DependentUpon>
+    <EmbeddedResource Include="Chats\UserChatView.resx">
+      <DependentUpon>UserChatView.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AboutQuickIRC.resx">
       <DependentUpon>AboutQuickIRC.vb</DependentUpon>

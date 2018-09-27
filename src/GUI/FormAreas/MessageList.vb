@@ -28,68 +28,35 @@ Public Class MessageList
     Property PartColor = Color.SlateGray
 
 
-    Sub New()
-        InitializeComponent()
-        _Chat_MessageAdded = AddressOf Chat_MessageAdded
-    End Sub
-
-    Sub BindToChat(chat As ChatStorageBase)
-
-        If BoundData IsNot Nothing Then
-            RemoveHandler BoundData.MessageAdded, _Chat_MessageAdded
-        End If
-
-        BoundData = chat
-
-        rtfMessages.Rtf = "{\rtf1\ansi\deff0}"
-        LastDate = Date.MinValue
-
-        If BoundData IsNot Nothing Then
-            Using lock As New ThreadLock(BoundData.Messages)
-                For Each message In BoundData.Messages
-                    AddMessage(message)
-                Next
-            End Using
-            AddHandler BoundData.MessageAdded, _Chat_MessageAdded
-        End If
-
-        rtfMessages.Select(rtfMessages.TextLength, 0)
-        rtfMessages.ScrollToCaret()
-
-    End Sub
-
-
-#Region "Events"
-
-    Private _Chat_MessageAdded As ChatStorageBase.MessageAddedEventHandler
-    Private Sub Chat_MessageAdded(message As IRC.Message)
-
-        If InvokeRequired Then
-            Invoke(Sub() Chat_MessageAdded(message))
-            Exit Sub
-        End If
-
-        AddMessage(message)
-
-        rtfMessages.Select(rtfMessages.TextLength, 0)
-        rtfMessages.ScrollToCaret()
-
-    End Sub
-
-#End Region
-
-#Region "Internals"
-
-    Private BoundData As ChatStorageBase
-
-    Private LastDate As Date = Date.MinValue
-
-
-    Private Sub AddMessage(message As IRC.Message)
-
+    Sub AddMessage(message As IRC.Message)
         If Not ShouldProcess(message) Then
             Exit Sub
         End If
+        AppendMessage(message)
+        rtfMessages.Select(rtfMessages.TextLength, 0)
+        rtfMessages.ScrollToCaret()
+    End Sub
+
+    Sub AddMessages(messages As CircularBuffer(Of IRC.Message))
+        Using lock As New ThreadLock(messages)
+            For Each message In messages
+                AddMessage(message)
+            Next
+        End Using
+        rtfMessages.Select(rtfMessages.TextLength, 0)
+        rtfMessages.ScrollToCaret()
+    End Sub
+
+    Sub Clear()
+        rtfMessages.Rtf = "{\rtf1\ansi\deff0}"
+        LastDate = Date.MinValue
+    End Sub
+
+#Region "Internals"
+
+    Private LastDate As Date = Date.MinValue
+
+    Private Sub AppendMessage(message As IRC.Message)
 
         Dim builder As New RtfBuilder
         builder.ParagraphSpacing = 72
@@ -175,7 +142,7 @@ Public Class MessageList
                     ' <\01><command> [params][\01]
                     Dim tokenizer As New IRC.Tokenizer(text)
                     tokenizer.Skip(ChrW(1))
-                    Dim verb = tokenizer.ReadCommand().TrimEnd(ChrW(1))
+                    Dim verb = tokenizer.ReadWord().ToUpper().TrimEnd(ChrW(1))
                     tokenizer.Skip(" "c)
                     text = tokenizer.ReadRemaining()?.TrimEnd(ChrW(1))
 

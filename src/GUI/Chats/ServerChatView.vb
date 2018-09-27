@@ -1,23 +1,29 @@
-﻿Public Class ServerChat
+﻿Public Class ServerChatView
 
+    Sub New()
+        InitializeComponent()
+        _Chat_MessageAdded = AddressOf Chat_MessageAdded
+    End Sub
 
-    Sub BindToChat(chat As ServerChatStorage)
+    Sub BindToChat(chat As ServerChat)
 
         If BoundChat IsNot Nothing Then
-            BoundChat.Message = txtMessage.Text
+            BoundChat.PendingMessage = txtMessage.Text
+            RemoveHandler BoundChat.MessageAdded, _Chat_MessageAdded
         End If
+
+        ' clear to defaults
+        lstMessages.Clear()
+        txtMessage.Enabled = False
 
         BoundChat = chat
 
         If BoundChat IsNot Nothing Then
+            lstMessages.AddMessages(BoundChat.Messages)
             txtMessage.Enabled = True
-            txtMessage.Text = BoundChat.Message
-        Else
-            txtMessage.Enabled = False
+            txtMessage.Text = BoundChat.PendingMessage
+            AddHandler BoundChat.MessageAdded, _Chat_MessageAdded
         End If
-
-        lstMessages.DisplayFriendlyMessages = chat.DisplayFriendlyMessages
-        lstMessages.BindToChat(BoundChat)
 
     End Sub
 
@@ -27,14 +33,23 @@
 
 #Region "Internals"
 
-    Private BoundChat As ChatStorageBase
+    Private BoundChat As ServerChat
+
+    Private _Chat_MessageAdded As ServerChat.MessageAddedEventHandler
+    Private Sub Chat_MessageAdded(message As IRC.Message)
+        If InvokeRequired Then
+            Invoke(Sub() Chat_MessageAdded(message))
+            Exit Sub
+        End If
+        lstMessages.AddMessage(message)
+    End Sub
 
     Private Sub txtMessage_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtMessage.KeyPress
         Select Case e.KeyChar
 
             Case ChrW(13)   ' ENTER
                 Try
-                    BoundChat.Chat.ProcessAndSend(txtMessage.Text)
+                    BoundChat.Writer.ProcessAndSend(txtMessage.Text)
                     txtMessage.Text = ""
                 Catch ex As NotImplementedException
                     ErrorProvider.SetError(txtMessage, "Command not recognized.")

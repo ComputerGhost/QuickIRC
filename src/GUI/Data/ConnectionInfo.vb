@@ -12,6 +12,6 @@ Public Structure ConnectionInfo
     Property Port As Integer
 
     ' Please register this with the Connection
-    Property Connector As IRC.ConnectChat
+    Property Connector As IRC.ConnectListener
 
 End Structure

@@ -5,28 +5,21 @@
     Sub New(connection_info As ConnectionInfo)
         InitializeComponent()
 
-        Connection = New IRC.Connection(
-            connection_info.Server,
-            connection_info.Port)
+        Connection = New IRC.Connection(connection_info.Server, connection_info.Port)
 
-        Connection.RegisterChat(New IRC.StandardHandler() With {
+        Connection.RegisterListener(New IRC.StandardListener() With {
             .OnChannelJoined = AddressOf HandleChannelJoined,
             .OnChannelParted = AddressOf HandleChannelParted,
             .OnUserMessage = AddressOf HandleUserMessage})
-        Connection.RegisterChat(connection_info.Connector)
+        Connection.RegisterListener(connection_info.Connector)
 
-        Dim server_chat = New IRC.ServerChat()
-        Connection.RegisterChat(server_chat)
         lstChannels.Items.Add(New ListViewItem({"server"}) With {
             .Group = lstChannels.Groups("Server"),
             .Selected = True,
-            .Tag = New ServerChatStorage(server_chat)})
-
-        Dim raw_chat = New IRC.ChatBase()
-        Connection.RegisterChat(raw_chat)
+            .Tag = New ServerChat(Connection)})
         lstChannels.Items.Add(New ListViewItem({"raw"}) With {
             .Group = lstChannels.Groups("Server"),
-            .Tag = New ServerChatStorage(raw_chat, False)})
+            .Tag = New RawChat(Connection)})
 
         Connection.Connect()
 
@@ -48,17 +41,11 @@
 
     Sub RemoveChat(chat_name As String)
 
-        If InvokeRequired Then
-            Invoke(Sub() RemoveChat(chat_name))
-            Exit Sub
-        End If
-
         Dim item_index = lstChannels.Items.IndexOfKey(chat_name)
         Dim list_item = lstChannels.Items(item_index)
-        Dim chat_info = DirectCast(list_item.Tag, ChatStorageBase)
-        Dim chat = chat_info.Chat
+        Dim chat_data = DirectCast(list_item.Tag, ChatBase)
 
-        Connection.UnregisterChat(chat)
+        Connection.UnregisterListener(chat_data.Listener)
         lstChannels.Items.Remove(list_item)
 
     End Sub
@@ -73,47 +60,49 @@
             Exit Sub
         End If
 
-        If channel_name.Length = 0 Then Exit Sub
+        If channel_name.Length = 0 Then
+            Exit Sub
+        End If
 
-        Dim channel_chat = New IRC.ChannelChat(channel_name)
-        Connection.RegisterChat(channel_chat)
         lstChannels.Items.Add(New ListViewItem({channel_name}) With {
             .Group = lstChannels.Groups("Channels"),
             .Name = channel_name,
             .Selected = True,
-            .Tag = New ChannelChatStorage(channel_chat)})
-        ChannelChat.Focus()
+            .Tag = New ChannelChat(Connection, channel_name)})
+        ChannelChatView.Focus()
 
     End Sub
 
     Private Sub HandleChannelParted(channel_name As String)
+        If InvokeRequired Then
+            Invoke(Sub() HandleChannelParted(channel_name))
+            Exit Sub
+        End If
         RemoveChat(channel_name)
     End Sub
 
-    Private Sub HandleUserMessage(other_nick As String, message As IRC.Message)
+    Private Sub HandleUserMessage(message As IRC.Message)
 
         If InvokeRequired Then
-            Invoke(Sub() HandleUserMessage(other_nick, message))
+            Invoke(Sub() HandleUserMessage(message))
             Exit Sub
         End If
 
-        If lstChannels.Items.ContainsKey(other_nick) Then
+        Dim nickname = message.Source.Name
+
+        If lstChannels.Items.ContainsKey(nickname) Then
             Exit Sub
         End If
 
-        Dim user_chat = New IRC.UserChat(other_nick)
-        Connection.RegisterChat(user_chat)
-
-        Dim chat_info = New UserChatStorage(user_chat)
+        Dim chat_info = New UserChat(Connection, nickname)
+        AddHandler chat_info.UserChanged, Sub(new_nick) ChangeChat(chat_info.Nickname, new_nick)
+        AddHandler chat_info.UserQuit, Sub() HandleChannelParted(chat_info.Nickname)
         chat_info.Messages.Add(message)
-        AddHandler chat_info.NickChanged, AddressOf ChangeChat
-        AddHandler chat_info.ChannelParted, AddressOf HandleChannelParted
 
-        Dim list_item = New ListViewItem({other_nick}) With {
+        lstChannels.Items.Add(New ListViewItem({nickname}) With {
             .Group = lstChannels.Groups("Users"),
-            .Name = other_nick,
-            .Tag = chat_info}
-        lstChannels.Items.Add(list_item)
+            .Name = nickname,
+            .Tag = chat_info})
 
     End Sub
 
@@ -123,7 +112,7 @@
 
     ' We want the server chat to have focus first
     Private Sub Me_Load() Handles Me.Load
-        BeginInvoke(Sub() ServerChat.Focus())
+        BeginInvoke(Sub() ServerChatView.Focus())
     End Sub
 
     ' Fixes a "limitation" of child controls not getting the resize event.
@@ -141,11 +130,11 @@
 
         Select Case lstChannels.SelectedItems(0).Group.Name
             Case "Server"
-                ServerChat.Focus()
+                ServerChatView.Focus()
             Case "Channels"
-                ChannelChat.Focus()
+                ChannelChatView.Focus()
             Case "Users"
-                UserChat.Focus()
+                UserChatView.Focus()
         End Select
 
     End Sub
@@ -158,19 +147,29 @@
         Dim index = lstChannels.SelectedIndices(0)
         Dim item = lstChannels.Items(index)
 
-        ServerChat.Visible = False
-        ChannelChat.Visible = False
-        UserChat.Visible = False
+        ' Hide all by default
+        RawChatView.Visible = False
+        ServerChatView.Visible = False
+        ChannelChatView.Visible = False
+        UserChatView.Visible = False
+
         Select Case item.Group.Name
             Case "Server"
-                ServerChat.BindToChat(item.Tag)
-                ServerChat.Visible = True
+                If item.Text = "raw" Then
+                    RawChatView.BindToChat(item.Tag)
+                    RawChatView.Visible = True
+                ElseIf item.Text = "server" Then
+                    ServerChatView.BindToChat(item.Tag)
+                    ServerChatView.Visible = True
+                Else
+                    Debug.Assert(False, "Chat is not raw or server.")
+                End If
             Case "Channels"
-                ChannelChat.BindToChat(item.Tag)
-                ChannelChat.Visible = True
+                ChannelChatView.BindToChat(item.Tag)
+                ChannelChatView.Visible = True
             Case "Users"
-                UserChat.BindtoChat(item.Tag)
-                UserChat.Visible = True
+                UserChatView.BindToChat(item.Tag)
+                UserChatView.Visible = True
             Case Else
                 Throw New Exception("Group name not recognized.")
         End Select
@@ -179,6 +178,18 @@
 
     Private Sub lstChannels_Resize() Handles lstChannels.Resize
         lstChannels.Columns(0).Width = lstChannels.ClientSize.Width
+    End Sub
+
+    Private Sub lstChannels_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstChannels.SelectedIndexChanged
+
+    End Sub
+
+    Private Sub lstChannels_MouseUp(sender As Object, e As MouseEventArgs) Handles lstChannels.MouseUp
+
+    End Sub
+
+    Private Sub lstChannels_Resize(sender As Object, e As EventArgs) Handles lstChannels.Resize
+
     End Sub
 
 #End Region

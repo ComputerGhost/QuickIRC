@@ -22,17 +22,18 @@ Partial Class ClientArea
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim ListViewGroup4 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("Server", System.Windows.Forms.HorizontalAlignment.Left)
-        Dim ListViewGroup5 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("Channels", System.Windows.Forms.HorizontalAlignment.Left)
-        Dim ListViewGroup6 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("Users", System.Windows.Forms.HorizontalAlignment.Left)
+        Dim ListViewGroup1 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("Server", System.Windows.Forms.HorizontalAlignment.Left)
+        Dim ListViewGroup2 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("Channels", System.Windows.Forms.HorizontalAlignment.Left)
+        Dim ListViewGroup3 As System.Windows.Forms.ListViewGroup = New System.Windows.Forms.ListViewGroup("Users", System.Windows.Forms.HorizontalAlignment.Left)
         Me.SplitContainer1 = New GUI.SplitContainer()
         Me.lstChannels = New System.Windows.Forms.ListView()
         Me.ChatName = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.UserChat = New GUI.UserChat()
-        Me.ChannelChat = New GUI.ChannelChat()
-        Me.ServerChat = New GUI.ServerChat()
+        Me.UserChatView = New GUI.UserChatView()
+        Me.ChannelChatView = New GUI.ChannelChatView()
+        Me.ServerChatView = New GUI.ServerChatView()
+        Me.RawChatView = New GUI.RawChatView()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -66,13 +67,13 @@ Partial Class ClientArea
         Me.lstChannels.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ChatName})
         Me.lstChannels.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lstChannels.FullRowSelect = True
-        ListViewGroup4.Header = "Server"
-        ListViewGroup4.Name = "Server"
-        ListViewGroup5.Header = "Channels"
-        ListViewGroup5.Name = "Channels"
-        ListViewGroup6.Header = "Users"
-        ListViewGroup6.Name = "Users"
-        Me.lstChannels.Groups.AddRange(New System.Windows.Forms.ListViewGroup() {ListViewGroup4, ListViewGroup5, ListViewGroup6})
+        ListViewGroup1.Header = "Server"
+        ListViewGroup1.Name = "Server"
+        ListViewGroup2.Header = "Channels"
+        ListViewGroup2.Name = "Channels"
+        ListViewGroup3.Header = "Users"
+        ListViewGroup3.Name = "Users"
+        Me.lstChannels.Groups.AddRange(New System.Windows.Forms.ListViewGroup() {ListViewGroup1, ListViewGroup2, ListViewGroup3})
         Me.lstChannels.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None
         Me.lstChannels.HideSelection = False
         Me.lstChannels.Location = New System.Drawing.Point(0, 0)
@@ -103,41 +104,51 @@ Partial Class ClientArea
         '
         'Panel1
         '
-        Me.Panel1.Controls.Add(Me.UserChat)
-        Me.Panel1.Controls.Add(Me.ChannelChat)
-        Me.Panel1.Controls.Add(Me.ServerChat)
+        Me.Panel1.Controls.Add(Me.RawChatView)
+        Me.Panel1.Controls.Add(Me.UserChatView)
+        Me.Panel1.Controls.Add(Me.ChannelChatView)
+        Me.Panel1.Controls.Add(Me.ServerChatView)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(3, 3)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(498, 362)
         Me.Panel1.TabIndex = 0
         '
-        'UserChat
+        'UserChatView
         '
-        Me.UserChat.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.UserChat.Location = New System.Drawing.Point(0, 0)
-        Me.UserChat.Name = "UserChat"
-        Me.UserChat.Size = New System.Drawing.Size(498, 362)
-        Me.UserChat.TabIndex = 2
-        Me.UserChat.Visible = False
+        Me.UserChatView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UserChatView.Location = New System.Drawing.Point(0, 0)
+        Me.UserChatView.Name = "UserChatView"
+        Me.UserChatView.Size = New System.Drawing.Size(498, 362)
+        Me.UserChatView.TabIndex = 2
+        Me.UserChatView.Visible = False
         '
-        'ChannelChat
+        'ChannelChatView
         '
-        Me.ChannelChat.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.ChannelChat.Location = New System.Drawing.Point(0, 0)
-        Me.ChannelChat.Name = "ChannelChat"
-        Me.ChannelChat.Size = New System.Drawing.Size(498, 362)
-        Me.ChannelChat.TabIndex = 1
-        Me.ChannelChat.Visible = False
+        Me.ChannelChatView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ChannelChatView.Location = New System.Drawing.Point(0, 0)
+        Me.ChannelChatView.Name = "ChannelChatView"
+        Me.ChannelChatView.Size = New System.Drawing.Size(498, 362)
+        Me.ChannelChatView.TabIndex = 1
+        Me.ChannelChatView.Visible = False
         '
-        'ServerChat
+        'ServerChatView
         '
-        Me.ServerChat.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.ServerChat.Location = New System.Drawing.Point(0, 0)
-        Me.ServerChat.Name = "ServerChat"
-        Me.ServerChat.Size = New System.Drawing.Size(498, 362)
-        Me.ServerChat.TabIndex = 0
-        Me.ServerChat.Visible = False
+        Me.ServerChatView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ServerChatView.Location = New System.Drawing.Point(0, 0)
+        Me.ServerChatView.Name = "ServerChatView"
+        Me.ServerChatView.Size = New System.Drawing.Size(498, 362)
+        Me.ServerChatView.TabIndex = 0
+        Me.ServerChatView.Visible = False
+        '
+        'RawChatView
+        '
+        Me.RawChatView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.RawChatView.Location = New System.Drawing.Point(0, 0)
+        Me.RawChatView.Name = "RawChatView"
+        Me.RawChatView.Size = New System.Drawing.Size(498, 362)
+        Me.RawChatView.TabIndex = 3
+        Me.RawChatView.Visible = False
         '
         'ClientArea
         '
@@ -161,7 +172,8 @@ Partial Class ClientArea
     Friend WithEvents ChatName As ColumnHeader
     Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
     Friend WithEvents Panel1 As Panel
-    Friend WithEvents UserChat As UserChat
-    Friend WithEvents ChannelChat As ChannelChat
-    Friend WithEvents ServerChat As ServerChat
+    Friend WithEvents UserChatView As UserChatView
+    Friend WithEvents ChannelChatView As ChannelChatView
+    Friend WithEvents ServerChatView As ServerChatView
+    Friend WithEvents RawChatView As RawChatView
 End Class

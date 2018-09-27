@@ -200,7 +200,7 @@
             .Name = txtHost.Text,
             .Server = txtHost.Text,
             .Port = txtPort.Text}
-        connect_info.Connector = New IRC.ConnectChat With {
+        connect_info.Connector = New IRC.ConnectListener With {
             .PreRegistration = New List(Of String),
             .PostRegistration = New List(Of String)}
 
