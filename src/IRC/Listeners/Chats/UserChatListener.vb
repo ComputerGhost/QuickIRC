@@ -1,6 +1,8 @@
 ﻿'
 ' Listens for chats to private messages
 '
+Imports IRC
+
 Public Class UserChatListener
     Inherits ListenerBase
 
@@ -38,6 +40,13 @@ Public Class UserChatListener
 
     End Sub
 
+    Public Overrides Sub HandleMessageSent(ByRef message As Message)
+        If Not ShouldProcess(message) Then
+            Exit Sub
+        End If
+        OnMessage?.Invoke(message)
+    End Sub
+
 
 #Region "Internals"
 
@@ -45,8 +54,8 @@ Public Class UserChatListener
     Shared TargetCommands As New HashSet(Of String) From {
         "NOTICE", "PRIVMSG"}
 
-    ' Other commands that we are interested in
-    Shared OtherCommands As New HashSet(Of String) From {
+    ' Commands that have us/them as a source
+    Shared SourceCommands As New HashSet(Of String) From {
         "AWAY", "NICK", "QUIT"}
 
 
@@ -57,13 +66,12 @@ Public Class UserChatListener
         End If
 
         Dim command = message.Verb
-
-        If UserName <> message.Source.Name Then
-            Return False
-        ElseIf TargetCommands.Contains(command) Then
-            Return (Connection.Nickname = message.Parameters(0))
-        ElseIf OtherCommands.Contains(command) Then
-            Return True
+        If TargetCommands.Contains(command) Then
+            Dim target = message.Parameters(0)
+            Return target = Connection.Nickname Or target = UserName
+        ElseIf SourceCommands.Contains(command) Then
+            Dim source = message.Source.Name
+            Return source Is Nothing Or source = UserName
         Else
             Return False
         End If

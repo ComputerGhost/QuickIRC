@@ -81,7 +81,7 @@ Public Class RedactListener
         Dim parts As New List(Of String)
         Dim current_word As String
 
-        For i = 0 To param_index - 1
+        For i = 0 To param_index
             current_word = tokenizer.ReadWord()
             If current_word Is Nothing Then Exit Sub
             parts.Add(current_word)

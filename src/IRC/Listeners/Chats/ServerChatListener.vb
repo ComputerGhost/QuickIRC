@@ -26,9 +26,7 @@ Public Class ServerChatListener
 
     Private Shared IgnoredCommands As New HashSet(Of String) From {
         "328", "332", "333", "353", "366",
-        "AWAY",
         "JOIN",
-        "NICK",
         "NOTICE",
         "PART",
         "PING",

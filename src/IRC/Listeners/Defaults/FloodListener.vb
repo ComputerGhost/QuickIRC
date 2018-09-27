@@ -42,8 +42,7 @@ Public Class FloodListener
                 End If
 
                 Dim sender = message.Source.Name
-                Dim command = tokenizer.ReadWord().ToUpper()
-                Dim params = tokenizer.ReadRemaining().TrimEnd(ChrW(1))
+                Dim command = tokenizer.ReadWord().ToUpper().TrimEnd(ChrW(1))
 
                 If command = "ACTION" Then
                     Exit Sub

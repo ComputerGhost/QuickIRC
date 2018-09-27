@@ -211,7 +211,7 @@
 
         ' Set the properties that the user wants.
         If chkPass.Checked Then
-            pre_commands.Add("/PASS " & txtPass.Text)
+            pre_commands.Add("PASS " & txtPass.Text)
         End If
         If chkUser.Checked Then
             Dim user_name = txtUserName.Text
@@ -219,15 +219,15 @@
                 If(lstMode.CheckedIndices.Contains(1), 4, 0) +  ' wallops
                 If(lstMode.CheckedIndices.Contains(0), 8, 0)    ' invisible
             Dim real_name = txtRealName.Text
-            pre_commands.Add(String.Format("/USER {0} {1} * {2}", user_name, user_mode, real_name))
+            pre_commands.Add(String.Format("USER {0} {1} * {2}", user_name, user_mode, real_name))
         End If
         If chkNick.Checked Then
-            pre_commands.Add("/NICK " & GetFirstNick())
+            pre_commands.Add("NICK " & GetFirstNick())
             connector.AlternativeNicks = GetFallbackNicks()
         End If
         If chkJoin.Checked Then
             Dim channels = ExtractList(txtJoin.Text)
-            post_commands.Add("/JOIN " & String.Join(","c, channels))
+            post_commands.Add("JOIN " & String.Join(","c, channels))
         End If
 
         Return connect_info

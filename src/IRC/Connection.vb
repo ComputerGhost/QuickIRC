@@ -52,7 +52,7 @@ Public Class Connection
 
     ' Inject a message, process as if it was sent, but don't send.
     Sub InjectSentMessage(message As Message)
-        Task.Run(Sub() InternalInject(message))
+        Task.Run(Sub() InternalInjectSent(message))
     End Sub
 
     ' Inject a raw message, process as if it was sent, but don't send.
@@ -60,6 +60,14 @@ Public Class Connection
         Dim fake = Message.Parse(raw)
         fake.Source = New MessageSource(Nickname)
         InjectSentMessage(fake)
+    End Sub
+
+    ' Post a message from our client to the user
+    Sub PostClientMessage(text As String)
+        Task.Run(Sub() InternalPost(New Message With {
+            .Source = MessageSource.Parse("QuickIRC"),
+            .Verb = "CLIENT_MSG",
+            .Parameters = {text}.ToList()}))
     End Sub
 
     ' Sends a CTCP request to a target, and notify listeners of this
@@ -142,6 +150,7 @@ Public Class Connection
             End SyncLock
 
             If Not internal.Connect(server, port) Then
+                ' Note: I don't think this is ever reached.
                 HandleFailedConnect(internal, New Exception("Connection could not be established."))
                 Exit Sub
             End If
@@ -163,14 +172,14 @@ Public Class Connection
         End SyncLock
     End Sub
 
-    Private Sub InternalInject(message As Message)
+    Private Sub InternalInjectSent(message As Message)
 
         message.Direction = MessageDirection.Outgoing
         message.Source = New MessageSource(Nickname)
 
-        Using lock As New ThreadLock(Listeners, SentNotificationQueue)
-            If QueueSentNotifications Then
-                SentNotificationQueue.Enqueue(message)
+        Using lock As New ThreadLock(Listeners, MessageQueue)
+            If QueueMessages Then
+                MessageQueue.Enqueue(message)
             Else
                 For Each listener In Listeners
                     listener.HandleMessageSent(message)
@@ -178,6 +187,18 @@ Public Class Connection
             End If
         End Using
 
+    End Sub
+
+    Private Sub InternalPost(message As Message)
+        Using lock As New ThreadLock(Listeners, MessageQueue)
+            If QueueMessages Then
+                MessageQueue.Enqueue(message)
+            Else
+                For Each listener In Listeners
+                    listener.HandleMessageReceived(message)
+                Next
+            End If
+        End Using
     End Sub
 
     Private Sub InternalSend(message As Message, do_notify As Boolean)
@@ -189,10 +210,10 @@ Public Class Connection
             InternalConnection?.SendLine(message.Raw)
         End SyncLock
 
-        Using lock As New ThreadLock(Listeners, SentNotificationQueue)
+        Using lock As New ThreadLock(Listeners, MessageQueue)
             If do_notify Then
-                If QueueSentNotifications Then
-                    SentNotificationQueue.Enqueue(message)
+                If QueueMessages Then
+                    MessageQueue.Enqueue(message)
                 Else
                     For Each listener In Listeners
                         listener.HandleMessageSent(message)
@@ -205,28 +226,32 @@ Public Class Connection
 
 
     '
-    ' Defer notifications of sent messages, if in the middle of other event.
+    ' Defer our messages to ourselves, if in the middle of other event.
     '
 
-    Private SentNotificationQueue As New Algorithms.Queue(Of Message)
-    Private QueueSentNotifications As Boolean = False
+    Private MessageQueue As New Algorithms.Queue(Of Message)
+    Private QueueMessages As Boolean = False
 
-    ' Starts queueing sent notifications.
-    ' Note: Assumes SentNotificationQueue is thread-locked
-    Sub StartSentQueue()
-        QueueSentNotifications = True
+    ' Starts queueing messages by us.
+    ' Note: Assumes MessageQueue is thread-locked
+    Sub StartQueue()
+        QueueMessages = True
     End Sub
 
-    ' Stops queueing sent notifications and flushes current notifications.
-    ' Note: Assumes SentNotificationQueue is thread-locked
-    Sub StopSentQueue()
-        While SentNotificationQueue.Count
-            Dim message = SentNotificationQueue.Dequeue()
+    ' Stops queueing messages by us and flushes current ones.
+    ' Note: Assumes MessageQueue is thread-locked
+    Sub StopQueue()
+        While MessageQueue.Count
+            Dim message = MessageQueue.Dequeue()
             For Each listener In Listeners
-                listener.HandleMessageSent(message)
+                If message.Direction = MessageDirection.Outgoing Then
+                    listener.HandleMessageSent(message)
+                Else
+                    listener.HandleMessageSent(message)
+                End If
             Next
         End While
-        QueueSentNotifications = False
+        QueueMessages = False
     End Sub
 
 
@@ -242,14 +267,14 @@ Public Class Connection
                 Exit Sub
             End If
 
-            Using lock As New ThreadLock(Listeners, SentNotificationQueue)
+            Using lock As New ThreadLock(Listeners, MessageQueue)
                 Try
-                    StartSentQueue()
+                    StartQueue()
                     For Each listener In Listeners
                         listener.HandleConnected()
                     Next
                 Finally
-                    StopSentQueue()
+                    StopQueue()
                 End Try
             End Using
 
@@ -264,15 +289,15 @@ Public Class Connection
                 Exit Sub
             End If
 
-            Using lock As New ThreadLock(Listeners, SentNotificationQueue)
+            Using lock As New ThreadLock(Listeners, MessageQueue)
                 Try
-                    StartSentQueue()
+                    StartQueue()
                     For Each listener In Listeners
                         listener.HandleDisconnected()
                     Next
-                    InjectSentLine(String.Format("CLIENTERROR {0}", ex.Message))
+                    PostClientMessage(ex.Message)
                 Finally
-                    StopSentQueue()
+                    StopQueue()
                 End Try
             End Using
 
@@ -307,9 +332,9 @@ Public Class Connection
             Dim msg = Message.Parse(line)
             msg.Direction = MessageDirection.Incoming
 
-            Using locks As New ThreadLock(Listeners, SentNotificationQueue)
+            Using locks As New ThreadLock(Listeners, MessageQueue)
                 Try
-                    StartSentQueue()
+                    StartQueue()
                     For Each listener In Listeners
                         listener.HandleMessageReceived(msg)
                     Next
@@ -317,9 +342,9 @@ Public Class Connection
                     TypeOf ex Is FloodException OrElse
                     TypeOf ex Is LimitException OrElse
                     TypeOf ex Is NotImplementedException
-                    InjectSentLine(String.Format("CLIENTERROR {0}", ex.Message))
+                    PostClientMessage(ex.Message)
                 Finally
-                    StopSentQueue()
+                    StopQueue()
                 End Try
             End Using
 
