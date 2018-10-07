@@ -2,26 +2,21 @@
 
     ReadOnly Property Connection As IRC.Connection
 
-    Sub New(connection_info As ConnectionInfo)
-        InitializeComponent()
+    Sub AttachConnection(connection As IRC.Connection)
 
-        Connection = New IRC.Connection(connection_info.Server, connection_info.Port)
-
-        Connection.RegisterListener(New IRC.StandardListener() With {
+        _Connection = connection
+        connection.RegisterListener(New IRC.StandardListener() With {
             .OnChannelJoined = AddressOf HandleChannelJoined,
             .OnChannelParted = AddressOf HandleChannelParted,
             .OnUserMessage = AddressOf HandleUserMessage})
-        Connection.RegisterListener(connection_info.Connector)
 
         lstChannels.Items.Add(New ListViewItem({"server"}) With {
             .Group = lstChannels.Groups("Server"),
             .Selected = True,
-            .Tag = New ServerChat(Connection)})
+            .Tag = New ServerChat(connection)})
         lstChannels.Items.Add(New ListViewItem({"raw"}) With {
             .Group = lstChannels.Groups("Server"),
-            .Tag = New RawChat(Connection)})
-
-        Connection.Connect()
+            .Tag = New RawChat(connection)})
 
     End Sub
 

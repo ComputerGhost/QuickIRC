@@ -67,9 +67,13 @@
     </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -113,12 +117,6 @@
     <Compile Include="Chats\ChannelChatView.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FormAreas\NewConnection.Designer.vb">
-      <DependentUpon>NewConnection.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FormAreas\NewConnection.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Chats\ServerChatView.Designer.vb">
       <DependentUpon>ServerChatView.vb</DependentUpon>
     </Compile>
@@ -137,12 +135,22 @@
     <Compile Include="Forms\AboutQuickIRC.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.Designer.vb">
-      <DependentUpon>MainForm.vb</DependentUpon>
+    <Compile Include="Forms\ChatForm.Designer.vb">
+      <DependentUpon>ChatForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainForm.vb">
+    <Compile Include="Forms\ChatForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ConnectionForm.Designer.vb">
+      <DependentUpon>ConnectionForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ConnectionForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Models\BookmarkModel.vb" />
+    <Compile Include="Models\BookmarksModel.vb" />
+    <Compile Include="Models\ConnectionModel.vb" />
+    <Compile Include="Models\VersionModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -179,7 +187,6 @@
     <Compile Include="FormAreas\NickList.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Data\ConnectionInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Chats\ChannelChatView.resx">
@@ -187,9 +194,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Chats\RawChatView.resx">
       <DependentUpon>RawChatView.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormAreas\NewConnection.resx">
-      <DependentUpon>NewConnection.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Chats\ServerChatView.resx">
       <DependentUpon>ServerChatView.vb</DependentUpon>
@@ -200,8 +204,11 @@
     <EmbeddedResource Include="Forms\AboutQuickIRC.resx">
       <DependentUpon>AboutQuickIRC.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.resx">
-      <DependentUpon>MainForm.vb</DependentUpon>
+    <EmbeddedResource Include="Forms\ChatForm.resx">
+      <DependentUpon>ChatForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ConnectionForm.resx">
+      <DependentUpon>ConnectionForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -254,6 +261,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\icon_close.png" />
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +269,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MainLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\baseline_delete_forever_black_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\baseline_save_black_18dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

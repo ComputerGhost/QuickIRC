@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="Threading\ILockable.vb" />
     <Compile Include="Threading\ThreadLock.vb" />
+    <Compile Include="Tokenizer.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
