@@ -116,11 +116,17 @@ Public Class MessageList
                     message.Source.Name, message.Source.Raw)
 
             Case "NICK"
-                builder.SetColor(NickColor)
-                builder.AppendFormat(
-                    "{0} is now known as {1}.",
-                    message.Source.Name,
-                    message.Parameters(0))
+                If message.Source.Name = "" Then
+                    ' Initial registration
+                    AppendRawMessage(builder, message)
+                Else
+                    ' Nick change
+                    builder.SetColor(NickColor)
+                    builder.AppendFormat(
+                        "{0} is now known as {1}.",
+                        message.Source.Name,
+                        message.Parameters(0))
+                End If
 
             Case "PRIVMSG", "NOTICE"
 
