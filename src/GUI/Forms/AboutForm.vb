@@ -1,4 +1,4 @@
-﻿Public Class AboutQuickIRC
+﻿Public Class AboutForm
 
     Private Sub Me_Load() Handles Me.Load
 
