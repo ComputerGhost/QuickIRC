@@ -24,20 +24,19 @@ Partial Class ChatForm
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ChatForm))
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
-        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ConnectionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.NewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ReconnectToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CloseToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SecurityToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CleanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.SettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ContentsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutQuickIRCToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CleanToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.NewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ClientArea = New GUI.ClientArea()
-        Me.SettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ImportAndExportToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
-        Me.CloseToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ReconnectToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -50,14 +49,6 @@ Partial Class ChatForm
         Me.MenuStrip1.TabIndex = 0
         Me.MenuStrip1.Text = "MenuStrip1"
         '
-        'StatusStrip1
-        '
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 428)
-        Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(800, 22)
-        Me.StatusStrip1.TabIndex = 1
-        Me.StatusStrip1.Text = "StatusStrip1"
-        '
         'ConnectionToolStripMenuItem
         '
         Me.ConnectionToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewToolStripMenuItem, Me.ReconnectToolStripMenuItem, Me.CloseToolStripMenuItem})
@@ -65,12 +56,47 @@ Partial Class ChatForm
         Me.ConnectionToolStripMenuItem.Size = New System.Drawing.Size(81, 20)
         Me.ConnectionToolStripMenuItem.Text = "&Connection"
         '
+        'NewToolStripMenuItem
+        '
+        Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
+        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.NewToolStripMenuItem.Text = "&New..."
+        '
+        'ReconnectToolStripMenuItem
+        '
+        Me.ReconnectToolStripMenuItem.Name = "ReconnectToolStripMenuItem"
+        Me.ReconnectToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ReconnectToolStripMenuItem.Text = "&Reconnect"
+        '
+        'CloseToolStripMenuItem
+        '
+        Me.CloseToolStripMenuItem.Name = "CloseToolStripMenuItem"
+        Me.CloseToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CloseToolStripMenuItem.Text = "&Close"
+        '
         'SecurityToolStripMenuItem
         '
-        Me.SecurityToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CleanToolStripMenuItem, Me.ToolStripSeparator1, Me.ImportAndExportToolStripMenuItem, Me.SettingsToolStripMenuItem})
+        Me.SecurityToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CleanToolStripMenuItem, Me.ToolStripSeparator1, Me.SettingsToolStripMenuItem})
         Me.SecurityToolStripMenuItem.Name = "SecurityToolStripMenuItem"
         Me.SecurityToolStripMenuItem.Size = New System.Drawing.Size(47, 20)
         Me.SecurityToolStripMenuItem.Text = "&Tools"
+        '
+        'CleanToolStripMenuItem
+        '
+        Me.CleanToolStripMenuItem.Name = "CleanToolStripMenuItem"
+        Me.CleanToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CleanToolStripMenuItem.Text = "&Clean..."
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
+        '
+        'SettingsToolStripMenuItem
+        '
+        Me.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem"
+        Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.SettingsToolStripMenuItem.Text = "&Options..."
         '
         'HelpToolStripMenuItem
         '
@@ -92,17 +118,13 @@ Partial Class ChatForm
         Me.AboutQuickIRCToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.AboutQuickIRCToolStripMenuItem.Text = "&About QuickIRC"
         '
-        'CleanToolStripMenuItem
+        'StatusStrip1
         '
-        Me.CleanToolStripMenuItem.Name = "CleanToolStripMenuItem"
-        Me.CleanToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.CleanToolStripMenuItem.Text = "&Clean..."
-        '
-        'NewToolStripMenuItem
-        '
-        Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
-        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.NewToolStripMenuItem.Text = "&New..."
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 428)
+        Me.StatusStrip1.Name = "StatusStrip1"
+        Me.StatusStrip1.Size = New System.Drawing.Size(800, 22)
+        Me.StatusStrip1.TabIndex = 1
+        Me.StatusStrip1.Text = "StatusStrip1"
         '
         'ClientArea
         '
@@ -111,35 +133,6 @@ Partial Class ChatForm
         Me.ClientArea.Name = "ClientArea"
         Me.ClientArea.Size = New System.Drawing.Size(800, 404)
         Me.ClientArea.TabIndex = 2
-        '
-        'SettingsToolStripMenuItem
-        '
-        Me.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem"
-        Me.SettingsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.SettingsToolStripMenuItem.Text = "&Options..."
-        '
-        'ImportAndExportToolStripMenuItem
-        '
-        Me.ImportAndExportToolStripMenuItem.Name = "ImportAndExportToolStripMenuItem"
-        Me.ImportAndExportToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.ImportAndExportToolStripMenuItem.Text = "Import and Export..."
-        '
-        'ToolStripSeparator1
-        '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
-        '
-        'CloseToolStripMenuItem
-        '
-        Me.CloseToolStripMenuItem.Name = "CloseToolStripMenuItem"
-        Me.CloseToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.CloseToolStripMenuItem.Text = "&Close"
-        '
-        'ReconnectToolStripMenuItem
-        '
-        Me.ReconnectToolStripMenuItem.Name = "ReconnectToolStripMenuItem"
-        Me.ReconnectToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.ReconnectToolStripMenuItem.Text = "&Reconnect"
         '
         'ChatForm
         '
@@ -173,6 +166,5 @@ Partial Class ChatForm
     Friend WithEvents ReconnectToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CloseToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
-    Friend WithEvents ImportAndExportToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents SettingsToolStripMenuItem As ToolStripMenuItem
 End Class
