@@ -15,11 +15,11 @@ Public Class UserChatListener
     Property OnUserChanged As UserChangedDelegate
     Property OnUserQuit As UserQuitDelegate
 
-    Property UserName As String
+    Property OtherUser As String
 
 
     Sub New(user_name As String)
-        UserName = user_name
+        OtherUser = user_name
     End Sub
 
 
@@ -30,8 +30,8 @@ Public Class UserChatListener
 
         Select Case message.Verb
             Case "NICK" ' <sender> NICK <new_nick>
-                UserName = message.Parameters(0)
-                OnUserChanged?.Invoke(UserName)
+                OtherUser = message.Parameters(0)
+                OnUserChanged?.Invoke(OtherUser)
             Case "QUIT" ' <sender> QUIT [reason]
                 OnUserQuit?.Invoke()
         End Select
@@ -66,15 +66,20 @@ Public Class UserChatListener
         End If
 
         Dim command = message.Verb
+        Dim target = message.Parameters(0)
+        Dim source = message.Source.Name
+
         If TargetCommands.Contains(command) Then
-            Dim target = message.Parameters(0)
-            Return target = Connection.Nickname Or target = UserName
+            If source = Connection.Nickname And target = OtherUser Then
+                Return True
+            End If
+            If source = OtherUser And target = Connection.Nickname Then
+                Return True
+            End If
         ElseIf SourceCommands.Contains(command) Then
-            Dim source = message.Source.Name
-            Return source Is Nothing Or source = UserName
-        Else
-            Return False
+            Return source Is Nothing Or source = OtherUser
         End If
+        Return False
 
     End Function
 
