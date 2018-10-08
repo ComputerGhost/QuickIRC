@@ -18,7 +18,7 @@ Public Class StandardListener
 
 
     ' These are sent in response to CTCP requests
-    Property ClientVersion = "QuickIRC v0.2"
+    Property ClientVersion = "QuickIRC v0.3"
     Property ClientSource = "https://github.com/ComputerGhost/QuickIRC"
 
 
