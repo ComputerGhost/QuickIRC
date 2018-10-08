@@ -1,10 +1,10 @@
-﻿Imports System.Text
-
-'
+﻿'
 ' Redacts sensitive information within commands.
 '
 Public Class RedactListener
     Inherits ListenerBase
+
+    Const REDACTION_TEXT = "••••••••"
 
     Overrides Sub HandleMessageSent(ByRef message As Message)
         If Not message.IsValid Then
@@ -67,11 +67,11 @@ Public Class RedactListener
         If message.Parameters.Count < param_index + 1 Then
             Exit Sub
         End If
-        If message.Parameters(param_index) = "[redacted]" Then
+        If message.Parameters(param_index) = REDACTION_TEXT Then
             Exit Sub
         End If
 
-        message.Parameters(param_index) = "[redacted]"
+        message.Parameters(param_index) = REDACTION_TEXT
 
     End Sub
 
@@ -89,8 +89,8 @@ Public Class RedactListener
 
         current_word = tokenizer.ReadWord()
         If current_word Is Nothing Then Exit Sub
-        If current_word = "[redacted]" Then Exit Sub
-        parts.Add("[redacted]")
+        If current_word = REDACTION_TEXT Then Exit Sub
+        parts.Add(REDACTION_TEXT)
 
         While True
             current_word = tokenizer.ReadWord()
