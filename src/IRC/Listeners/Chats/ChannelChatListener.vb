@@ -174,6 +174,8 @@ Public Class ChannelChatListener
                 OnTopicChanged?.Invoke(Topic)
 
         End Select
+
+        OnMessage?.Invoke(message)
     End Sub
 
     Overrides Sub HandleMessageSent(ByRef message As Message)
