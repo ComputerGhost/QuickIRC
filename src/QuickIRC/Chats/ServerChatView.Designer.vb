@@ -22,9 +22,9 @@ Partial Class ServerChatView
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.lstMessages = New GUI.MessageList()
+        Me.lstMessages = New QuickIRC.MessageList()
         Me.txtMessage = New System.Windows.Forms.TextBox()
-        Me.ErrorProvider = New GUI.ErrorProvider()
+        Me.ErrorProvider = New QuickIRC.ErrorProvider()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '

@@ -32,7 +32,7 @@ Partial Class AboutForm
         '
         'PictureBox1
         '
-        Me.PictureBox1.BackgroundImage = Global.GUI.My.Resources.Resources.MainLogo
+        Me.PictureBox1.BackgroundImage = Global.QuickIRC.My.Resources.Resources.MainLogo
         Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.PictureBox1.Location = New System.Drawing.Point(12, 12)
         Me.PictureBox1.Name = "PictureBox1"

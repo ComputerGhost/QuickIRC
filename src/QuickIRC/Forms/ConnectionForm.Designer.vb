@@ -42,7 +42,7 @@ Partial Class ConnectionForm
         Me.btnSave = New System.Windows.Forms.Button()
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.ErrorProvider = New GUI.ErrorProvider()
+        Me.ErrorProvider = New QuickIRC.ErrorProvider()
         Me.lblNewChat = New System.Windows.Forms.Label()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -200,7 +200,7 @@ Partial Class ConnectionForm
         '
         Me.btnSave.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnSave.Enabled = False
-        Me.btnSave.Image = Global.GUI.My.Resources.Resources.baseline_save_black_18dp
+        Me.btnSave.Image = Global.QuickIRC.My.Resources.Resources.baseline_save_black_18dp
         Me.btnSave.Location = New System.Drawing.Point(279, 11)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(23, 23)
@@ -210,7 +210,7 @@ Partial Class ConnectionForm
         'btnDelete
         '
         Me.btnDelete.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnDelete.Image = Global.GUI.My.Resources.Resources.baseline_delete_forever_black_18dp
+        Me.btnDelete.Image = Global.QuickIRC.My.Resources.Resources.baseline_delete_forever_black_18dp
         Me.btnDelete.Location = New System.Drawing.Point(256, 11)
         Me.btnDelete.Name = "btnDelete"
         Me.btnDelete.Size = New System.Drawing.Size(23, 23)

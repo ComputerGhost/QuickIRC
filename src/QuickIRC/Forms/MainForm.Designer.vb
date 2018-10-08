@@ -31,7 +31,7 @@ Partial Class MainForm
         Me.ContentsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutQuickIRCToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
-        Me.ClientArea = New GUI.ClientArea()
+        Me.ClientArea = New QuickIRC.ClientArea()
         Me.btnConnect = New System.Windows.Forms.Button()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()

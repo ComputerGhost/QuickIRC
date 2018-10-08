@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{70698FF9-E570-46C2-9617-428F3370035F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>GUI.My.MyApplication</StartupObject>
-    <RootNamespace>GUI</RootNamespace>
+    <StartupObject>QuickIRC.My.MyApplication</StartupObject>
+    <RootNamespace>QuickIRC</RootNamespace>
     <AssemblyName>QuickIRC</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
