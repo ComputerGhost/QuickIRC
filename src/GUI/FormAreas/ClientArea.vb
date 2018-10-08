@@ -179,18 +179,6 @@
         lstChannels.Columns(0).Width = lstChannels.ClientSize.Width
     End Sub
 
-    Private Sub lstChannels_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstChannels.SelectedIndexChanged
-
-    End Sub
-
-    Private Sub lstChannels_MouseUp(sender As Object, e As MouseEventArgs) Handles lstChannels.MouseUp
-
-    End Sub
-
-    Private Sub lstChannels_Resize(sender As Object, e As EventArgs) Handles lstChannels.Resize
-
-    End Sub
-
 #End Region
 
 End Class
