@@ -3,6 +3,18 @@ Imports Newtonsoft.Json
 
 Public Class ConnectionForm
 
+    ' Form to open the connection in. If unset, a new one is created.
+    Property TargetForm As MainForm
+        Get
+            Return _TargetForm
+        End Get
+        Set(value As MainForm)
+            _TargetForm = value
+            lblNewChat.Visible = value Is Nothing
+        End Set
+    End Property
+    Private _TargetForm As MainForm
+
     Private Sub Form_Load() Handles Me.Load
 
         ddlBookmark.Items.Add("")
@@ -71,10 +83,12 @@ Public Class ConnectionForm
             End If
         End With
 
-        ' Create a new chat window and we're done!
-        Dim form As New ChatForm()
-        form.Connect(connection)
-        form.Show()
+        ' Setup the chat window and we're done!
+        If TargetForm Is Nothing Then
+            TargetForm = New MainForm
+        End If
+        TargetForm.Connect(connection)
+        TargetForm.Show()
         Me.Close()
 
     End Sub

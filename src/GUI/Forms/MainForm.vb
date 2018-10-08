@@ -1,8 +1,8 @@
 ﻿Imports System.ComponentModel
 
-Public Class ChatForm
+Public Class MainForm
 
-    ReadOnly Property Connection As IRC.Connection
+    ReadOnly Property Connection As IRC.Connection = Nothing
 
     Sub Connect(connection_info As ConnectionModel)
 
@@ -17,32 +17,38 @@ Public Class ChatForm
         Me.Text = connection_info.Name
         ClientArea.AttachConnection(Connection)
 
+        ' Change out some visibility now that we have a connection
+        btnConnect.Visible = False
+        ClientArea.Visible = True
+
         ' Now we start
         Connection.Connect()
 
     End Sub
 
-#Region "Menu item events"
-
-    Private Sub NewToolStripMenuItem_Click() Handles NewToolStripMenuItem.Click
-        ConnectionForm.Show()
+    Private Sub btnConnect_Click() Handles btnConnect.Click
+        ConnectionForm.TargetForm = Me
+        ConnectionForm.ShowDialog()
     End Sub
 
-    Private Sub ReconnectToolStripMenuItem_Click() Handles ReconnectToolStripMenuItem.Click
+#Region "Menu item events"
 
+    ' Connection
+
+    Private Sub NewToolStripMenuItem_Click() Handles NewToolStripMenuItem.Click
+        If Connection Is Nothing Then
+            ConnectionForm.TargetForm = Me
+            ConnectionForm.ShowDialog()
+        Else
+            ConnectionForm.Show()
+        End If
     End Sub
 
     Private Sub CloseToolStripMenuItem_Click() Handles CloseToolStripMenuItem.Click
         Close()
     End Sub
 
-    Private Sub CleanToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CleanToolStripMenuItem.Click
-
-    End Sub
-
-    Private Sub SettingsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SettingsToolStripMenuItem.Click
-
-    End Sub
+    ' Help
 
     Private Sub ContentsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ContentsToolStripMenuItem.Click
         Try

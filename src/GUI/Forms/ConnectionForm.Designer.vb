@@ -43,6 +43,7 @@ Partial Class ConnectionForm
         Me.btnDelete = New System.Windows.Forms.Button()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.ErrorProvider = New GUI.ErrorProvider()
+        Me.lblNewChat = New System.Windows.Forms.Label()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -229,12 +230,22 @@ Partial Class ConnectionForm
         '
         Me.ErrorProvider.ContainerControl = Me
         '
+        'lblNewChat
+        '
+        Me.lblNewChat.AutoSize = True
+        Me.lblNewChat.Location = New System.Drawing.Point(46, 206)
+        Me.lblNewChat.Name = "lblNewChat"
+        Me.lblNewChat.Size = New System.Drawing.Size(175, 13)
+        Me.lblNewChat.TabIndex = 52
+        Me.lblNewChat.Text = "This will create a new chat window:"
+        '
         'ConnectionForm
         '
         Me.AcceptButton = Me.btnConnect
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(314, 236)
+        Me.Controls.Add(Me.lblNewChat)
         Me.Controls.Add(Me.btnDelete)
         Me.Controls.Add(Me.btnSave)
         Me.Controls.Add(Me.txtUsername)
@@ -281,4 +292,5 @@ Partial Class ConnectionForm
     Friend WithEvents btnDelete As Button
     Friend WithEvents btnSave As Button
     Friend WithEvents ToolTip1 As ToolTip
+    Friend WithEvents lblNewChat As Label
 End Class
