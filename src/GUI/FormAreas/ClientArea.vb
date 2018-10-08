@@ -95,6 +95,7 @@
 
         Dim chat_info = New UserChat(Connection, nickname)
         AddHandler chat_info.UserChanged, Sub(new_nick) ChangeChat(chat_info.Nickname, new_nick)
+        AddHandler chat_info.UserParted, Sub() HandleChannelParted(chat_info.Nickname)
         AddHandler chat_info.UserQuit, Sub() HandleChannelParted(chat_info.Nickname)
         chat_info.Messages.Add(message)
 

@@ -17,7 +17,8 @@ Public Class UserChat
     '
 
     Event UserChanged(new_nick As String)
-    Event UserQuit()
+    Event UserParted()  ' We sent PART.
+    Event UserQuit()    ' They quit.
 
     ReadOnly Property Nickname As String
 
@@ -31,6 +32,9 @@ Public Class UserChat
             New IRC.UserChatListener(nickname),
             New IRC.UserChatWriter(connection, nickname))
         Me.Nickname = nickname
+        With DirectCast(Writer, IRC.UserChatWriter)
+            .OnPart = AddressOf HandleUserParted
+        End With
         With DirectCast(Listener, IRC.UserChatListener)
             .OnMessage = AddressOf HandleMessage
             .OnUserChanged = AddressOf HandleUserChanged
@@ -51,6 +55,10 @@ Public Class UserChat
     Private Sub HandleUserChanged(new_nick As String)
         RaiseEvent UserChanged(new_nick)
         _Nickname = new_nick
+    End Sub
+
+    Private Sub HandleUserParted(username As String)
+        RaiseEvent UserParted()
     End Sub
 
     Private Sub HandleUserQuit()
