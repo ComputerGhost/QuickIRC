@@ -1,6 +1,8 @@
 ﻿'
 ' Handles auto-responding to some commands and notifications of basic events.
 '
+Imports IRC
+
 Public Class StandardListener
     Inherits ListenerBase
 
@@ -81,6 +83,16 @@ Public Class StandardListener
 
         End Select
 
+    End Sub
+
+    Public Overrides Sub HandleMessageSent(ByRef message As Message)
+        If Not message.IsValid Then
+            Exit Sub
+        End If
+        Select Case message.Verb
+            Case "NOTICE", "PRIVMSG"
+                OnUserMessage?.Invoke(message)
+        End Select
     End Sub
 
 

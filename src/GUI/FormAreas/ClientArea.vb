@@ -83,7 +83,11 @@
             Exit Sub
         End If
 
+        ' Either source or target, depending on whether they sent it or us
         Dim nickname = message.Source.Name
+        If nickname = Connection.Nickname Then
+            nickname = message.Parameters(0)
+        End If
 
         If lstChannels.Items.ContainsKey(nickname) Then
             Exit Sub
