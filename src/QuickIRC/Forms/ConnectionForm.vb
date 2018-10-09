@@ -268,7 +268,7 @@ Public Class ConnectionForm
         If txtUsername.Text = PreviousNick Then
             txtUsername.Text = first_nick
         End If
-        PreviousNick = first_nick
+        PreviousNick = txtNickname.Text
     End Sub
 
 
