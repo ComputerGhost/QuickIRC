@@ -40,7 +40,6 @@ Public Class MainForm
     Private Sub btnConnect_Click() Handles btnConnect.Click
         ConnectionForm.TargetForm = Me
         ConnectionForm.ShowDialog()
-        'test
     End Sub
 
 #Region "Menu item events"
@@ -105,7 +104,7 @@ Public Class MainForm
 
         Dim source = New HttpSource() With {
             .CachePolicy = New RequestCachePolicy(RequestCacheLevel.CacheIfAvailable),
-            .UserAgent = "QuickIRC"}
+            .UserAgent = "QuickIRC/0.4"}
         Dim fetcher = New Fetcher(source)
 
         Using image = fetcher.FetchClosest(websiteUri, New Size(16, 16))
