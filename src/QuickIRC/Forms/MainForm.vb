@@ -40,6 +40,7 @@ Public Class MainForm
     Private Sub btnConnect_Click() Handles btnConnect.Click
         ConnectionForm.TargetForm = Me
         ConnectionForm.ShowDialog()
+        'test
     End Sub
 
 #Region "Menu item events"
