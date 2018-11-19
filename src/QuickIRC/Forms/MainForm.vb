@@ -51,6 +51,7 @@ Public Class MainForm
             ConnectionForm.TargetForm = Me
             ConnectionForm.ShowDialog()
         Else
+            ConnectionForm.TargetForm = Nothing
             ConnectionForm.Show()
         End If
     End Sub
